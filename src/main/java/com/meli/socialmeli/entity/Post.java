@@ -1,0 +1,21 @@
+package com.meli.socialmeli.entity;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class Post {
+    private Integer id;
+    private LocalDate date;
+    private Double price;
+    private Product product;
+    private Seller seller;
+    private Double discount;
+    private Boolean hasPromo;
+    private Integer category;
+}
