@@ -1,6 +1,5 @@
 package com.meli.socialmeli.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,5 +17,7 @@ public class PostDto {
     private ProductDto product;
     private Integer category;
     private Double price;
+    @JsonProperty("has_promo")
+    private Boolean hasPromo;
     private Double discount;
 }

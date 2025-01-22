@@ -1,6 +1,6 @@
 package com.meli.socialmeli.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.meli.socialmeli.dto.PostDto;
 import com.meli.socialmeli.dto.ProductDto;
 import com.meli.socialmeli.entity.Post;
@@ -8,6 +8,8 @@ import com.meli.socialmeli.entity.Product;
 import com.meli.socialmeli.entity.Seller;
 import com.meli.socialmeli.entity.User;
 import com.meli.socialmeli.exception.BadRequestException;
+import com.meli.socialmeli.dto.response.ResponseWrapperDto;
+import com.meli.socialmeli.exception.NotFoundException;
 import com.meli.socialmeli.repository.IPostRepository;
 import com.meli.socialmeli.repository.IProductRepository;
 import com.meli.socialmeli.repository.IUserRepository;
@@ -39,6 +41,10 @@ public class PostServiceImpl implements IPostService {
 
         if (seller.isEmpty()) {
             throw new BadRequestException("No se encontro un user con el id: " + post.getUserId());
+        }
+
+        if(!(seller.get() instanceof Seller)){
+            throw new BadRequestException("El usuario no es un vendedor");
         }
 
         ProductDto productDto = post.getProduct();
@@ -75,5 +81,37 @@ public class PostServiceImpl implements IPostService {
         }
 
         return post;
+    }
+
+    public ResponseWrapperDto createPromoPost(PostDto promoPostDto) {
+        User user = userRepository.findById(promoPostDto.getUserId()).orElseThrow(() -> new NotFoundException("User not found"));
+        if (!(user instanceof Seller)) {
+            throw new NotFoundException("User is not a seller");
+        }
+        Optional<Product> product = productRepository.add(
+                Product.builder()
+                        .id(promoPostDto.getProduct().getProductId())
+                        .name(promoPostDto.getProduct().getProductName())
+                        .brand(promoPostDto.getProduct().getBrand())
+                        .color(promoPostDto.getProduct().getColor())
+                        .notes(promoPostDto.getProduct().getNotes())
+                        .type(promoPostDto.getProduct().getType())
+                        .build()
+        );
+
+        Post post = Post.builder()
+                .date(promoPostDto.getDate())
+                .price(promoPostDto.getPrice())
+                .product(product.get())
+                .seller((Seller) user)
+                .category(promoPostDto.getCategory())
+                .hasPromo(true)
+                .discount(promoPostDto.getDiscount())
+                .build();
+
+        if(postRepository.add(post).isEmpty())
+            throw new NotFoundException("Error");
+
+        return  ResponseWrapperDto.builder().message("Success").build();
     }
 }

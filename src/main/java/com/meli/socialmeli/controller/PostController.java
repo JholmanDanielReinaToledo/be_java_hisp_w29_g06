@@ -2,6 +2,7 @@ package com.meli.socialmeli.controller;
 
 
 import com.meli.socialmeli.dto.PostDto;
+import com.meli.socialmeli.dto.response.ResponseWrapperDto;
 import com.meli.socialmeli.service.IPostService;
 import com.meli.socialmeli.service.PostServiceImpl;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,13 @@ public class PostController {
     @PostMapping("/post")
     public ResponseEntity<?> addPost(@RequestBody PostDto postDto) {
         return new ResponseEntity<>(postService.addPost(postDto), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/promo-post")
+    public ResponseEntity<ResponseWrapperDto> createPromoPost(@RequestBody PostDto promoPostDto) {
+        return ResponseEntity.status(HttpStatus.OK).body(
+                postService.createPromoPost(promoPostDto)
+        );
     }
 
 }
