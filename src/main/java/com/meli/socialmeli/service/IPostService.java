@@ -1,6 +1,6 @@
 package com.meli.socialmeli.service;
 
-import com.meli.socialmeli.dto.PostDto;
+import com.meli.socialmeli.dto.request.PostDto;
 import com.meli.socialmeli.dto.response.ResponseWrapperDto;
 
 public interface IPostService {
