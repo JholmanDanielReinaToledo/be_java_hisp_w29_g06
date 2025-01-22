@@ -35,16 +35,12 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public PostDto addPost(PostDto post) {
+    public ResponseWrapperDto addPost(PostDto post) {
 
-        Optional<User> seller = this.userRepository.findById(post.getUserId());
+        Optional<Seller> seller = this.userRepository.findSellerById(post.getUserId());
 
         if (seller.isEmpty()) {
             throw new BadRequestException("No se encontro un user con el id: " + post.getUserId());
-        }
-
-        if(!(seller.get() instanceof Seller)){
-            throw new BadRequestException("El usuario no es un vendedor");
         }
 
         ProductDto productDto = post.getProduct();
@@ -60,27 +56,25 @@ public class PostServiceImpl implements IPostService {
         Optional<Product> productSaved = this.productRepository.add(productToSave);
 
         if (productSaved.isEmpty()) {
-            throw new BadRequestException("Error adding post");
+            productSaved = this.productRepository.findById(productDto.getProductId());
         }
 
-        Post postToSave = new Post(
-                null,
-                post.getDate(),
-                post.getPrice(),
-                productSaved.get(),
-                (Seller) seller.get(),
-                null,
-                false,
-                post.getCategory()
-        );
+        Post postToSave = Post.builder()
+                .date(post.getDate())
+                .price(post.getPrice())
+                .product(productSaved.get())
+                .seller(seller.get())
+                .hasPromo(false)
+                .category(post.getCategory())
+                .build();
 
         Optional<Post> postSaved = this.postRepository.add(postToSave);
 
         if (postSaved.isEmpty()) {
-            throw new BadRequestException("Error adding post");
+            throw new BadRequestException("Error adding post, already exist");
         }
 
-        return post;
+        return ResponseWrapperDto.builder().message("Success").build();
     }
 
     public ResponseWrapperDto createPromoPost(PostDto promoPostDto) {

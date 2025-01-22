@@ -27,4 +27,13 @@ public class UserRepositoryImpl implements IUserRepository {
     public Optional<User> findById(Integer id) {
         return this.users.stream().filter(user -> user.getId().equals(id)).findFirst();
     }
+
+    @Override
+    public Optional<Seller> findSellerById(Integer id) {
+        Optional<User> user = this.users.stream().filter(u -> u.getId().equals(id)).findFirst();
+        if (user.isPresent() && user.get() instanceof Seller) {
+            return Optional.of((Seller) user.get());
+        }
+        return Optional.empty();
+    }
 }

@@ -23,8 +23,11 @@ public class PostController {
     }
 
     @PostMapping("/post")
-    public ResponseEntity<?> addPost(@RequestBody PostDto postDto) {
-        return new ResponseEntity<>(postService.addPost(postDto), HttpStatus.CREATED);
+    public ResponseEntity<ResponseWrapperDto> addPost(@RequestBody PostDto postDto) {
+        return new ResponseEntity<>(
+                postService.addPost(postDto),
+                HttpStatus.CREATED
+        );
     }
 
     @PostMapping("/promo-post")
