@@ -1,7 +1,8 @@
 package com.meli.socialmeli.controller;
 
-import com.meli.socialmeli.service.IUserService;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.meli.socialmeli.service.IUserService;
 
 @RestController
 public class UserController {
@@ -11,4 +12,6 @@ public class UserController {
     public UserController(IUserService userService) {
         this.userService = userService;
     }
+
+    
 }

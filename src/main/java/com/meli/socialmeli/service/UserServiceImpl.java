@@ -1,7 +1,8 @@
 package com.meli.socialmeli.service;
 
-import com.meli.socialmeli.repository.IUserRepository;
 import org.springframework.stereotype.Service;
+
+import com.meli.socialmeli.repository.IUserRepository;
 
 @Service
 public class UserServiceImpl implements IUserService {
@@ -11,4 +12,5 @@ public class UserServiceImpl implements IUserService {
     public UserServiceImpl(IUserRepository userRepository) {
         this.userRepository = userRepository;
     }
+    
 }
