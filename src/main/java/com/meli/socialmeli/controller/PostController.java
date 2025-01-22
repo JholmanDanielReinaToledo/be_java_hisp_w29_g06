@@ -1,7 +1,7 @@
 package com.meli.socialmeli.controller;
 
 
-import com.meli.socialmeli.dto.PostDto;
+import com.meli.socialmeli.dto.request.PostDto;
 import com.meli.socialmeli.dto.response.ResponseWrapperDto;
 import com.meli.socialmeli.service.IPostService;
 import com.meli.socialmeli.service.PostServiceImpl;

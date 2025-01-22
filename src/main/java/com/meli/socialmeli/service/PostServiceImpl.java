@@ -1,7 +1,7 @@
 package com.meli.socialmeli.service;
 
 
-import com.meli.socialmeli.dto.PostDto;
+import com.meli.socialmeli.dto.request.PostDto;
 import com.meli.socialmeli.dto.ProductDto;
 import com.meli.socialmeli.entity.Post;
 import com.meli.socialmeli.entity.Product;
@@ -82,7 +82,7 @@ public class PostServiceImpl implements IPostService {
         if (!(user instanceof Seller)) {
             throw new NotFoundException("User is not a seller");
         }
-        Optional<Product> product = productRepository.add(
+        Product product = productRepository.add(
                 Product.builder()
                         .id(promoPostDto.getProduct().getProductId())
                         .name(promoPostDto.getProduct().getProductName())
@@ -91,12 +91,13 @@ public class PostServiceImpl implements IPostService {
                         .notes(promoPostDto.getProduct().getNotes())
                         .type(promoPostDto.getProduct().getType())
                         .build()
-        );
+        ).orElseThrow(() -> new NotFoundException("Error, producto asociado a ese id ya existente"));
+
 
         Post post = Post.builder()
                 .date(promoPostDto.getDate())
                 .price(promoPostDto.getPrice())
-                .product(product.get())
+                .product(product)
                 .seller((Seller) user)
                 .category(promoPostDto.getCategory())
                 .hasPromo(true)
