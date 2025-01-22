@@ -3,6 +3,7 @@ package com.meli.socialmeli.repository;
 import com.meli.socialmeli.entity.Seller;
 import com.meli.socialmeli.entity.User;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.ArrayList;
 import java.util.List;
