@@ -26,4 +26,5 @@ public class UserController {
         ResponseDto response = this.userService.followSeller(userId, sellerId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    
 }

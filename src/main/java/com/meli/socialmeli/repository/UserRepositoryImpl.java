@@ -8,8 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import com.meli.socialmeli.entity.Seller;
 import com.meli.socialmeli.entity.User;
-
-
 @Repository
 public class UserRepositoryImpl implements IUserRepository {
 
@@ -27,10 +25,9 @@ public class UserRepositoryImpl implements IUserRepository {
     }
 
     @Override
-    public boolean followSeller(User user, User seller) {
-        if (seller instanceof Seller) {
-            return user.getFollows().add((Seller) seller);
-        }
-        return false;
+    public boolean followSeller(User user, Seller seller) {
+        
+        return user.getFollows().add(seller);
+        
     }
 }
