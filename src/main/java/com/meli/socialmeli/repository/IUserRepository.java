@@ -1,13 +1,8 @@
 package com.meli.socialmeli.repository;
-
-import com.meli.socialmeli.entity.Seller;
-import com.meli.socialmeli.entity.User;
-
 import java.util.Optional;
 
+import com.meli.socialmeli.entity.User;
 public interface IUserRepository {
-
-    Optional<User> findById(Integer id);
-    boolean followSeller(User user, User seller);
-
+    public Optional<User> findById(Integer id);
+    public boolean followSeller(User user, User seller);
 }
