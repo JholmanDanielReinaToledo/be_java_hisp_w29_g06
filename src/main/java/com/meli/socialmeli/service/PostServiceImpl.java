@@ -11,6 +11,7 @@ import com.meli.socialmeli.repository.IUserRepository;
 public class PostServiceImpl implements IPostService {
 
     private IPostRepository postRepository;
+
     private IUserRepository userRepository;
 
     public PostServiceImpl(IPostRepository postRepository, IUserRepository userRepository) {
@@ -28,6 +29,5 @@ public class PostServiceImpl implements IPostService {
         } else {
             throw new NotFoundException("User not found.");
         }
-        
     }
 }

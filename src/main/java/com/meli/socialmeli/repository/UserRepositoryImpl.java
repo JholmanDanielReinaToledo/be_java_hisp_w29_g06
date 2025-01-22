@@ -6,7 +6,9 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
+import com.meli.socialmeli.entity.Seller;
 import com.meli.socialmeli.entity.User;
+
 
 @Repository
 public class UserRepositoryImpl implements IUserRepository {
@@ -18,11 +20,17 @@ public class UserRepositoryImpl implements IUserRepository {
         users = List.of(new User(1, "John Doe",new ArrayList<>()), new User(2, "Jane Smith",new ArrayList<>()));
     }
 
-    public Optional<User> findById(Integer userId) {
-        // Implement logic to fetch user from the database based on userId
-        Optional<User> user_to_find = users.stream()
-                        .filter(user -> user.getId().equals(userId))
-                        .findFirst();
-        return user_to_find;
+
+    @Override
+    public Optional<User> findById(Integer id) {
+        return this.users.stream().filter(user -> user.getId().equals(id)).findFirst();
+    }
+
+    @Override
+    public boolean followSeller(User user, User seller) {
+        if (seller instanceof Seller) {
+            return user.getFollows().add((Seller) seller);
+        }
+        return false;
     }
 }

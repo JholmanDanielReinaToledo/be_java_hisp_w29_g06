@@ -1,6 +1,4 @@
 package com.meli.socialmeli.controller;
-
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.meli.socialmeli.dto.NumberOfProductsInSaleDto;
 import com.meli.socialmeli.service.IPostService;
+import com.meli.socialmeli.service.PostServiceImpl;
 
 
 @RestController
@@ -18,7 +17,7 @@ public class PostController {
 
     private IPostService postService;
 
-    public PostController(IPostService postService) {
+    public PostController(PostServiceImpl postService) {
         this.postService = postService;
     }
 
