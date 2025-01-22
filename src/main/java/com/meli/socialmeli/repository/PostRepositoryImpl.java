@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+
 @Repository
 public class PostRepositoryImpl implements IPostRepository {
     private List<Post> posts;
@@ -32,5 +33,15 @@ public class PostRepositoryImpl implements IPostRepository {
         posts.add(post);
 
         return Optional.of(post);
+    }
+
+    public Long getNumberOfProductsInSale(Integer user_id) {
+        return posts.stream()
+                    .filter(post -> (post.getSeller()
+                                        .getId()
+                                        .equals(user_id)
+                                    &&
+                                    post.getHasPromo()))
+                    .count();
     }
 }

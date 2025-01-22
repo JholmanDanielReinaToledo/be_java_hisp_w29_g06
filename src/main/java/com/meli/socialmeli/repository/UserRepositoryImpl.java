@@ -23,11 +23,9 @@ public class UserRepositoryImpl implements IUserRepository {
     }
 
     @Override
-    public Optional<Seller> findSellerById(Integer id) {
-        Optional<User> user = this.users.stream().filter(u -> u.getId().equals(id)).findFirst();
-        if (user.isPresent() && user.get() instanceof Seller) {
-            return Optional.of((Seller) user.get());
-        }
-        return Optional.empty();
+    public boolean followSeller(User user, Seller seller) {
+
+        return user.getFollows().add(seller);
+
     }
 }

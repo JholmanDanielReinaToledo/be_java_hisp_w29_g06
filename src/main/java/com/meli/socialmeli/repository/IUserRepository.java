@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface IUserRepository {
     Optional<User> findById(Integer id);
-    Optional<Seller> findSellerById(Integer id);
+    boolean followSeller(User user, Seller seller);
 }

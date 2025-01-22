@@ -7,15 +7,17 @@ import com.meli.socialmeli.entity.Post;
 import com.meli.socialmeli.entity.Product;
 import com.meli.socialmeli.entity.Seller;
 import com.meli.socialmeli.entity.User;
-import com.meli.socialmeli.exception.BadRequestException;
 import com.meli.socialmeli.dto.response.ResponseWrapperDto;
 import com.meli.socialmeli.exception.ConflictException;
 import com.meli.socialmeli.exception.NotFoundException;
 import com.meli.socialmeli.exception.UnauthorizedException;
 import com.meli.socialmeli.repository.IPostRepository;
 import com.meli.socialmeli.repository.IProductRepository;
+import com.meli.socialmeli.repository.ISellerRepository;
 import com.meli.socialmeli.repository.IUserRepository;
 import org.springframework.stereotype.Service;
+
+import com.meli.socialmeli.dto.NumberOfProductsInSaleDto;
 
 import java.util.Optional;
 
@@ -25,21 +27,24 @@ public class PostServiceImpl implements IPostService {
     private IPostRepository postRepository;
     private IProductRepository productRepository;
     private IUserRepository userRepository;
+    private ISellerRepository sellerRepository;
 
     public PostServiceImpl(
             IPostRepository postRepository,
             IProductRepository productRepository,
-            IUserRepository userRepository
+            IUserRepository userRepository,
+            ISellerRepository sellerRepository
     ) {
         this.postRepository = postRepository;
         this.productRepository = productRepository;
         this.userRepository = userRepository;
+        this.sellerRepository = sellerRepository;
     }
 
     @Override
     public ResponseWrapperDto addPost(PostDto post) {
 
-        Optional<Seller> seller = this.userRepository.findSellerById(post.getUserId());
+        Optional<Seller> seller = this.sellerRepository.findById(post.getUserId());
 
         if (seller.isEmpty()) {
             throw new NotFoundException("No se encontro un user con el id: " + post.getUserId());
@@ -80,10 +85,8 @@ public class PostServiceImpl implements IPostService {
     }
 
     public ResponseWrapperDto createPromoPost(PostDto promoPostDto) {
-        User user = userRepository.findById(promoPostDto.getUserId()).orElseThrow(() -> new NotFoundException("User not found"));
-        if (!(user instanceof Seller)) {
-            throw new UnauthorizedException("User is not a seller");
-        }
+        Seller seller = sellerRepository.findById(promoPostDto.getUserId()).orElseThrow(() -> new NotFoundException("User not found"));
+
         Product product = productRepository.add(
                 Product.builder()
                         .id(promoPostDto.getProduct().getProductId())
@@ -100,7 +103,7 @@ public class PostServiceImpl implements IPostService {
                 .date(promoPostDto.getDate())
                 .price(promoPostDto.getPrice())
                 .product(product)
-                .seller((Seller) user)
+                .seller(seller)
                 .category(promoPostDto.getCategory())
                 .hasPromo(true)
                 .discount(promoPostDto.getDiscount())
@@ -110,5 +113,17 @@ public class PostServiceImpl implements IPostService {
             throw new ConflictException("Error adding post, already exist");
 
         return  ResponseWrapperDto.builder().message("Success").build();
+    }
+
+    @Override
+    public NumberOfProductsInSaleDto getNumberOfProductsInSale(Integer userId) {
+
+        if (userRepository.findById(userId).isPresent()){
+            String name = userRepository.findById(userId).get().getName();
+            Long count = postRepository.getNumberOfProductsInSale(userId);
+            return new NumberOfProductsInSaleDto(userId,name,count);
+        } else {
+            throw new NotFoundException("User not found.");
+        }
     }
 }
