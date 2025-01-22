@@ -3,6 +3,7 @@ package com.meli.socialmeli.service;
 import org.springframework.stereotype.Service;
 
 import com.meli.socialmeli.dto.NumberOfProductsInSaleDto;
+import com.meli.socialmeli.exception.NotFoundException;
 import com.meli.socialmeli.repository.IPostRepository;
 import com.meli.socialmeli.repository.IUserRepository;
 
@@ -19,8 +20,14 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public NumberOfProductsInSaleDto getNumberOfProductsInSale(Integer userId) {
-        String name = userRepository.findById(userId).getName();
-        Long count = postRepository.getNumberOfProductsInSale(userId);
-        return new NumberOfProductsInSaleDto(userId,name,count);
+        
+        if (userRepository.findById(userId).isPresent()){
+            String name = userRepository.findById(userId).get().getName();
+            Long count = postRepository.getNumberOfProductsInSale(userId);
+            return new NumberOfProductsInSaleDto(userId,name,count);
+        } else {
+            throw new NotFoundException("User not found.");
+        }
+        
     }
 }

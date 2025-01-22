@@ -1,6 +1,7 @@
 package com.meli.socialmeli.repository;
-import com.meli.socialmeli.entity.User;
+import java.util.Optional;
 
+import com.meli.socialmeli.entity.User;
 public interface IUserRepository {
-    public User findById(Integer id);
+    public Optional<User> findById(Integer id);
 }
