@@ -26,7 +26,7 @@ public class ProductRepositoryImpl implements IProductRepository {
         Optional<Product> existingProduct = findById(product.getId());
 
         if (existingProduct.isPresent()) {
-            return Optional.ofNullable(null);
+            return Optional.empty();
         }
 
         products.add(product);

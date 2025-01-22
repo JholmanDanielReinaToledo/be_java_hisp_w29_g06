@@ -25,7 +25,7 @@ public class PostRepositoryImpl implements IPostRepository {
         Optional<Post> postExist = this.findById(post.getId());
 
         if (postExist.isPresent()) {
-            return Optional.ofNullable(null);
+            return Optional.empty();
         }
 
         post.setId(posts.size() + 1);

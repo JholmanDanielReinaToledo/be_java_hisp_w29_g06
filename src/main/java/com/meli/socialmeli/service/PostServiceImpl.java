@@ -9,7 +9,9 @@ import com.meli.socialmeli.entity.Seller;
 import com.meli.socialmeli.entity.User;
 import com.meli.socialmeli.exception.BadRequestException;
 import com.meli.socialmeli.dto.response.ResponseWrapperDto;
+import com.meli.socialmeli.exception.ConflictException;
 import com.meli.socialmeli.exception.NotFoundException;
+import com.meli.socialmeli.exception.UnauthorizedException;
 import com.meli.socialmeli.repository.IPostRepository;
 import com.meli.socialmeli.repository.IProductRepository;
 import com.meli.socialmeli.repository.IUserRepository;
@@ -40,7 +42,7 @@ public class PostServiceImpl implements IPostService {
         Optional<Seller> seller = this.userRepository.findSellerById(post.getUserId());
 
         if (seller.isEmpty()) {
-            throw new BadRequestException("No se encontro un user con el id: " + post.getUserId());
+            throw new NotFoundException("No se encontro un user con el id: " + post.getUserId());
         }
 
         ProductDto productDto = post.getProduct();
@@ -71,7 +73,7 @@ public class PostServiceImpl implements IPostService {
         Optional<Post> postSaved = this.postRepository.add(postToSave);
 
         if (postSaved.isEmpty()) {
-            throw new BadRequestException("Error adding post, already exist");
+            throw new ConflictException("Error adding post, already exist");
         }
 
         return ResponseWrapperDto.builder().message("Success").build();
@@ -80,7 +82,7 @@ public class PostServiceImpl implements IPostService {
     public ResponseWrapperDto createPromoPost(PostDto promoPostDto) {
         User user = userRepository.findById(promoPostDto.getUserId()).orElseThrow(() -> new NotFoundException("User not found"));
         if (!(user instanceof Seller)) {
-            throw new NotFoundException("User is not a seller");
+            throw new UnauthorizedException("User is not a seller");
         }
         Product product = productRepository.add(
                 Product.builder()
@@ -91,7 +93,7 @@ public class PostServiceImpl implements IPostService {
                         .notes(promoPostDto.getProduct().getNotes())
                         .type(promoPostDto.getProduct().getType())
                         .build()
-        ).orElseThrow(() -> new NotFoundException("Error, producto asociado a ese id ya existente"));
+        ).orElseThrow(() -> new ConflictException("Error, producto asociado a ese id ya existente"));
 
 
         Post post = Post.builder()
@@ -105,7 +107,7 @@ public class PostServiceImpl implements IPostService {
                 .build();
 
         if(postRepository.add(post).isEmpty())
-            throw new NotFoundException("Error");
+            throw new ConflictException("Error adding post, already exist");
 
         return  ResponseWrapperDto.builder().message("Success").build();
     }
