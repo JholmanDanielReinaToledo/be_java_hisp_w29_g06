@@ -1,35 +1,34 @@
 package com.meli.socialmeli.repository;
 
-import com.meli.socialmeli.entity.Seller;
 import com.meli.socialmeli.entity.User;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import com.meli.socialmeli.entity.Seller;
 
 @Repository
 public class UserRepositoryImpl implements IUserRepository {
 
     private List<User> users;
-    private List<Seller> sellers;
+
+    public UserRepositoryImpl() {
+        // Initialize users with sample data
+        users = List.of(new User(1, "John Doe",new ArrayList<>()), new User(2, "Jane Smith",new ArrayList<>()));
+    }
 
 
     @Override
-    public List<User> searchFollowersBySeller(Integer sellerId) {
-        Optional<User> seller= users.stream().filter(user -> user.getId().equals(sellerId)).findFirst();
-        if (seller.isPresent() && seller.get() instanceof Seller seller1) {
-            return seller1.getFollowers();
-        }
-        return List.of();
+    public Optional<User> findById(Integer id) {
+        return this.users.stream().filter(user -> user.getId().equals(id)).findFirst();
     }
 
     @Override
-    public String searchSellerById(Integer sellerId) {
-        Optional<User> seller= users.stream().filter(user -> user.getId().equals(sellerId)).findFirst();
-        if (seller.isPresent() && seller.get() instanceof Seller seller1) {
-            return seller1.getName();
-        }
-        return "Not found";
+    public boolean followSeller(User user, Seller seller) {
+
+        return user.getFollows().add(seller);
 
     }
 }

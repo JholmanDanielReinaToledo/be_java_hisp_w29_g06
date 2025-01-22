@@ -1,11 +1,8 @@
 package com.meli.socialmeli.service;
 
-import com.meli.socialmeli.dto.FollowersDto;
-import com.meli.socialmeli.exception.NotFoundException;
-
-import java.util.List;
+import com.meli.socialmeli.dto.ResponseDto;
 
 public interface IUserService {
 
-    FollowersDto findFollowersBySeller(Integer sellerId);
+    ResponseDto followSeller(Integer userId, Integer sellerId);
 }
