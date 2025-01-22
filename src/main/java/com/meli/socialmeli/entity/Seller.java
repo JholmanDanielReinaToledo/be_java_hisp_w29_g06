@@ -10,5 +10,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Seller extends User {
+
     private List<User> followers;
+
+    public Seller(Integer id, String name, List<Seller> follows, List<User> followers) {
+        super(id, name, follows);
+        this.followers = followers;
+    }
 }
