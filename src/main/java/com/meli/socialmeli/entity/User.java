@@ -1,6 +1,5 @@
 package com.meli.socialmeli.entity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import lombok.AllArgsConstructor;

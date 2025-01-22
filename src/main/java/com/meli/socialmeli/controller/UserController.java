@@ -1,5 +1,7 @@
 package com.meli.socialmeli.controller;
 
+
+import com.meli.socialmeli.service.ISellerService;
 import com.meli.socialmeli.service.UserServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import com.meli.socialmeli.dto.ResponseDto;
 public class UserController {
 
     private IUserService userService;
+    private ISellerService sellerService;
 
     public UserController(UserServiceImpl userService) {
         this.userService = userService;
@@ -31,7 +34,7 @@ public class UserController {
 
     @GetMapping("/users/{userId}/followers/list")
     public ResponseEntity<?> listFollowersBySeller(@PathVariable(name="userId") Integer sellerId){
-        return new ResponseEntity<>(userService.findFollowersBySeller(sellerId), HttpStatus.OK);
+        return new ResponseEntity<>(sellerService.findFollowersBySeller(sellerId), HttpStatus.OK);
 
     }
 }
