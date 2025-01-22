@@ -19,11 +19,6 @@ public class UserRepositoryImpl implements IUserRepository {
 
 
     @Override
-    public Integer count() {
-        return 0;
-    }
-
-    @Override
     public Optional<User> findById(Integer id) {
         return users.stream().filter(user -> user.getId().equals(id)).findFirst();
     }

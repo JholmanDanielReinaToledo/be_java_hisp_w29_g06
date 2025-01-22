@@ -6,7 +6,6 @@ import java.util.Optional;
 
 public interface IUserRepository {
 
-    Integer count();
     Optional<User> findById(Integer id);
 
 }
