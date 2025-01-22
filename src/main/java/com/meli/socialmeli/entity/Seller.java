@@ -12,11 +12,5 @@ import java.util.List;
 @NoArgsConstructor
 public class Seller extends User {
     private List<User> followers = new ArrayList<>();
-    public Seller(Integer id, String name) {
-        super(id, name, new ArrayList<>());
-    }
-    public void addFollower(User user) {
-        followers.add(user);
-    }
 
 }

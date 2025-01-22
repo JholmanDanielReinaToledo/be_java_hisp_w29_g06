@@ -14,10 +14,4 @@ public class User {
     private String name;
     private List<Seller> follows = new ArrayList<>();
 
-
-    public void follow(Seller seller) {
-        follows.add(seller);
-    }
-
-
 }
