@@ -18,9 +18,9 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/users/{userId}/follow/{userIdToFollow}")
-    public ResponseEntity<ResponseDto> followSeller(@PathVariable Integer userId, @PathVariable Integer userIdToFollow ) {
-        ResponseDto response = this.userService.followSeller(userId, userIdToFollow);
+    @PostMapping("/users/{userId}/follow/{sellerId}")
+    public ResponseEntity<ResponseDto> followSeller(@PathVariable Integer userId, @PathVariable Integer sellerId ) {
+        ResponseDto response = this.userService.followSeller(userId, sellerId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
