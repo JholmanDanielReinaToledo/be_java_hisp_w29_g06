@@ -23,8 +23,4 @@ public class SellerController {
         SellerDto sellerDto = sellerService.countFollowers(userId);
         return new ResponseEntity<>(sellerDto, HttpStatus.OK);
     }
-
-
-
-
 }

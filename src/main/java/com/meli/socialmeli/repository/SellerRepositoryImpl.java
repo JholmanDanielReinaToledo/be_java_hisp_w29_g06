@@ -22,6 +22,4 @@ public class SellerRepositoryImpl implements ISellerRepository{
     public Optional<Seller> findById(Integer id) {
         return this.sellers.stream().filter(seller -> seller.getId().equals(id)).findFirst();
     }
-
-
 }
