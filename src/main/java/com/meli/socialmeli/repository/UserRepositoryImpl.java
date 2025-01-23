@@ -14,12 +14,20 @@ public class UserRepositoryImpl implements IUserRepository {
     private List<User> users;
 
     public UserRepositoryImpl() {
-        users = new ArrayList<>();
+
+        users = List.of(new User(1, "John Doe",new ArrayList<>()), new User(2, "Jane Smith",new ArrayList<>()));
     }
 
 
     @Override
     public Optional<User> findById(Integer id) {
-        return users.stream().filter(user -> user.getId().equals(id)).findFirst();
+        return this.users.stream().filter(user -> user.getId().equals(id)).findFirst();
+    }
+
+    @Override
+    public boolean followSeller(User user, Seller seller) {
+
+        return user.getFollows().add(seller);
+
     }
 }

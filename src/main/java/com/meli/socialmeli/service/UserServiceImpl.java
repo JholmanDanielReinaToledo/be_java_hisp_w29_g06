@@ -1,21 +1,20 @@
 package com.meli.socialmeli.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.meli.socialmeli.dto.SellerDto;
+import com.meli.socialmeli.dto.ResponseDto;
 import com.meli.socialmeli.entity.Seller;
 import com.meli.socialmeli.entity.User;
 import com.meli.socialmeli.exception.NotFoundException;
+import com.meli.socialmeli.repository.ISellerRepository;
 import com.meli.socialmeli.repository.IUserRepository;
-import com.meli.socialmeli.repository.UserRepositoryImpl;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements IUserService {
 
     private IUserRepository userRepository;
+    private ISellerRepository sellerRepository;
 
     public UserServiceImpl(IUserRepository userRepository) {
         this.userRepository = userRepository;
@@ -23,16 +22,16 @@ public class UserServiceImpl implements IUserService {
 
 
     @Override
-    public SellerDto countFollowers(Integer id) {
-        ObjectMapper mapper = new ObjectMapper();
-        Optional<User> optionalUser = userRepository.findById(id);
-        User user = optionalUser.orElseThrow(() -> new NotFoundException("No existe el usuario con id: " + id));
-        if (user instanceof Seller seller) {
-            Integer followers = seller.getFollowers().size();
-            SellerDto sellerDto = mapper.convertValue(seller, SellerDto.class);
-            sellerDto.setFollowers(followers);
-            return sellerDto;
+    public ResponseDto followSeller(Integer userId, Integer sellerId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            throw new NotFoundException("El usuario con ese Id no existe");
         }
-        throw new NotFoundException("El usuario con id " + id + " no es un vendedor.");
+        Optional<Seller> seller = sellerRepository.findById(sellerId);
+        if (seller.isEmpty()) {
+            throw new NotFoundException("El vendedor con ese Id no existe");
+        }
+        this.userRepository.followSeller(user.get(), seller.get());
+        return new ResponseDto("Vendedor seguido con éxito");
     }
 }

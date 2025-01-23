@@ -1,9 +1,8 @@
 package com.meli.socialmeli.service;
 
-import com.meli.socialmeli.dto.SellerDto;
+import com.meli.socialmeli.dto.ResponseDto;
 
 public interface IUserService {
 
-    SellerDto countFollowers(Integer id);
-
+    ResponseDto followSeller(Integer userId, Integer sellerId);
 }
