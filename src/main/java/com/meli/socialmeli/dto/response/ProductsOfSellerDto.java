@@ -1,6 +1,7 @@
 package com.meli.socialmeli.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.meli.socialmeli.dto.PostDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,5 +20,5 @@ public class ProductsOfSellerDto {
     @JsonProperty("user_name")
     private String userName;
 
-    private List<PostDto>
+    private List<PostDto> posts;
 }
