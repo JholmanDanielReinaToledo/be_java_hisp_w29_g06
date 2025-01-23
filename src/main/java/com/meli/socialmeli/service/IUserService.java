@@ -8,5 +8,4 @@ import java.util.List;
 public interface IUserService {
 
     ResponseDto followSeller(Integer userId, Integer sellerId);
-    FollowedDto getFollowedById(Integer userId);
 }
