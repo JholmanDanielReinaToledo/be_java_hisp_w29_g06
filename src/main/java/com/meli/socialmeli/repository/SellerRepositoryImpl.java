@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.stereotype.Repository;
-
 import com.meli.socialmeli.entity.Seller;
 import com.meli.socialmeli.entity.User;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class SellerRepositoryImpl implements ISellerRepository{
@@ -16,10 +15,6 @@ public class SellerRepositoryImpl implements ISellerRepository{
 
     public SellerRepositoryImpl() {
         this.sellers = new ArrayList<>();
-        sellers.add(new Seller(1, "Pepe1", new ArrayList<>()));
-        sellers.add(new Seller(2, "Pepe2", new ArrayList<>()));
-        sellers.add(new Seller(3, "Pepe3", new ArrayList<>()));
-        sellers.add(new Seller(234, "Pepe3", new ArrayList<>()));
     }
 
     @Override
@@ -38,5 +33,10 @@ public class SellerRepositoryImpl implements ISellerRepository{
     @Override
     public boolean removeFollower(Seller seller, User user) {
         return seller.getFollowers().remove(user);
+    }
+
+    @Override
+    public boolean save(Seller seller) {
+        return this.sellers.add(seller);
     }
 }

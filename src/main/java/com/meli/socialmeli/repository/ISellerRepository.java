@@ -6,7 +6,7 @@ import com.meli.socialmeli.entity.Seller;
 import com.meli.socialmeli.entity.User;
 
 public interface ISellerRepository {
-
+    boolean save(Seller seller);
     public Optional<Seller> findById(Integer id);
     public boolean addFollower(Seller seller, User user);
     boolean isFollower(Seller seller, User user);

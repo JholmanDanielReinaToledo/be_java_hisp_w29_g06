@@ -24,7 +24,7 @@ public class PostRepositoryImpl implements IPostRepository {
                         LocalDate.now(),
                         12000.0,
                         new Product(1, "Consola", "Gaming", "Asus", "Negra", "Consola negra para venta"),
-                        new Seller(234, "Pepito", List.of()),
+                        new Seller(3, "Pepito", List.of()),
                         0.25,
                         true,
                         100

@@ -1,27 +1,29 @@
 package com.meli.socialmeli.service;
 
-import com.meli.socialmeli.dto.response.ProductsOfSellerDto;
-import com.meli.socialmeli.entity.Seller;
-import com.meli.socialmeli.entity.User;
-import com.meli.socialmeli.repository.ISellerRepository;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 
+import com.meli.socialmeli.dto.NumberOfProductsInSaleDto;
 import com.meli.socialmeli.dto.PostDto;
 import com.meli.socialmeli.dto.ProductDto;
 import com.meli.socialmeli.dto.response.PostFromFollowedDto;
+import com.meli.socialmeli.dto.response.ProductsOfSellerDto;
+import com.meli.socialmeli.dto.response.ResponseWrapperDto;
 import com.meli.socialmeli.entity.Post;
 import com.meli.socialmeli.entity.Product;
-import com.meli.socialmeli.dto.response.ResponseWrapperDto;
+import com.meli.socialmeli.entity.Seller;
+import com.meli.socialmeli.entity.User;
 import com.meli.socialmeli.exception.ConflictException;
 import com.meli.socialmeli.exception.NoSellersFollowedException;
 import com.meli.socialmeli.exception.NotFoundException;
 import com.meli.socialmeli.repository.IPostRepository;
 import com.meli.socialmeli.repository.IProductRepository;
+import com.meli.socialmeli.repository.ISellerRepository;
 import com.meli.socialmeli.repository.IUserRepository;
-import com.meli.socialmeli.dto.NumberOfProductsInSaleDto;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PostServiceImpl implements IPostService {
@@ -117,7 +119,7 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public PostFromFollowedDto getPostsFromFollowedUsers(Integer userId) {
+    public PostFromFollowedDto getPostsFromFollowedUsers(Integer userId, Integer order) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
 
         if (user.getFollows().isEmpty()) {
@@ -125,6 +127,16 @@ public class PostServiceImpl implements IPostService {
         }
 
         List<Post> postList = postRepository.getPostsBySellers(user.getFollows());
+        if (order == 1) {
+            postList = postList.stream()
+                .sorted(Comparator.comparing(Post::getDate))
+                .collect(Collectors.toList());
+        }else if (order == 2) {
+            postList = postList.stream()
+                .sorted(Comparator.comparing(Post::getDate).reversed())
+                .collect(Collectors.toList());
+        }
+
         List<PostDto> postDtoList = postList.stream().map(post -> PostDto.builder()
                 .userId(post.getSeller().getId())
                 .id(post.getId())
