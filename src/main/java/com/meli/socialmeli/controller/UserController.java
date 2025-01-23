@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import com.meli.socialmeli.service.IUserService;
 
 import com.meli.socialmeli.dto.ResponseDto;
 import com.meli.socialmeli.service.ISellerService;
@@ -38,17 +40,17 @@ public class UserController {
         ResponseDto response = this.userService.unfollowSeller(userId, sellerId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    
-    
+
     @GetMapping("/{userId}/followers/list")
-    public ResponseEntity<?> listFollowersBySeller(@PathVariable(name="userId") Integer sellerId){
-        return new ResponseEntity<>(sellerService.findFollowersBySeller(sellerId), HttpStatus.OK);
+    public ResponseEntity<?> listFollowersBySeller(@PathVariable(name="userId") Integer sellerId,
+                                                   @RequestParam(required=false, defaultValue = "name_asc") String order){
+        return new ResponseEntity<>(sellerService.findFollowersBySeller(sellerId, order), HttpStatus.OK);
     }
 
     @GetMapping("{userId}/followed/list")
-    public ResponseEntity<?> listFollowed(@PathVariable Integer userId){
-        return new ResponseEntity<>(userService.getFollowedList(userId),HttpStatus.OK);
+    public ResponseEntity<?> listFollowed(@PathVariable Integer userId,
+                                          @RequestParam(required = false, defaultValue = "name_asc") String order) {
+        return new ResponseEntity<>(userService.getFollowedList(userId, order), HttpStatus.OK);
     }
-
 
 }

@@ -9,5 +9,6 @@ public interface IUserRepository {
     Optional<User> findById(Integer id);
     boolean followSeller(User user, Seller seller);
     boolean save(User user);
+    boolean isFollower(User user, Seller seller);
     boolean unfollowSeller(User user, Seller seller);
 }

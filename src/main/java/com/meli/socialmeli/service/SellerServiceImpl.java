@@ -10,6 +10,7 @@ import com.meli.socialmeli.exception.NotFoundException;
 import com.meli.socialmeli.repository.ISellerRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,14 +25,22 @@ public class SellerServiceImpl implements ISellerService{
     }
 
     @Override
-    public FollowersDto findFollowersBySeller(Integer sellerId){
-        ObjectMapper objectMapper = new ObjectMapper();
+    public FollowersDto findFollowersBySeller(Integer sellerId, String order){
+        Optional<Seller> seller = sellerRepository.findById(sellerId);
+        if (seller.isEmpty()) {
+            throw new NotFoundException("El vendedor con el id " + sellerId + " no existe.");
+        }
 
-        Seller seller = sellerRepository.findById(sellerId).orElse(null);
-        List<User> listUser = seller.getFollowers();
+        List<User> listUser = seller.get().getFollowers();
 
         if(listUser.isEmpty()){
             throw new NotFoundException("No se encontraron Folowers asociados al vendendor.");
+        }
+
+        if ("name_desc".equals(order)) {
+            listUser.sort(Comparator.comparing(User::getName).reversed());
+        } else {
+            listUser.sort(Comparator.comparing(User::getName));
         }
 
         List<UserDto> listUserDto = listUser.stream()
@@ -43,8 +52,7 @@ public class SellerServiceImpl implements ISellerService{
                 })
                 .collect(Collectors.toList());
 
-
-        return new FollowersDto(seller.getId(),seller.getName(),listUserDto);
+        return new FollowersDto(seller.get().getId(),seller.get().getName(),listUserDto);
     }
 
 

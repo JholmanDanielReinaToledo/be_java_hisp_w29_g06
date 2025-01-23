@@ -20,12 +20,24 @@ public class UserRepositoryImpl implements IUserRepository {
 
     public UserRepositoryImpl() {
         this.users = new ArrayList<>();
+        this.users.add(
+                new User(123, "Juan", new ArrayList<>())
+        );
+        users.add(new User(1, "aJohn Doe",new ArrayList<>()));
+        users.add(new User(2, "bJane Smith",new ArrayList<>()));
+        users.add(new User(3, "cJhonson",new ArrayList<>()));
+        users.add(new User(4, "dJulian",new ArrayList<>()));
     }
 
 
     @Override
     public Optional<User> findById(Integer id) {
         return this.users.stream().filter(user -> user.getId().equals(id)).findFirst();
+    }
+
+    @Override
+    public boolean isFollower(User user, Seller seller) {
+        return user.getFollows().contains(seller);
     }
 
     @Override
