@@ -21,4 +21,5 @@ public class ProductDto {
     private String brand;
     private String color;
     private String notes;
+
 }
