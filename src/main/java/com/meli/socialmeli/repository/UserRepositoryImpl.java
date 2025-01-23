@@ -14,8 +14,10 @@ public class UserRepositoryImpl implements IUserRepository {
     private List<User> users;
 
     public UserRepositoryImpl() {
-        // Initialize users with sample data
-        users = List.of(new User(1, "John Doe",new ArrayList<>()), new User(2, "Jane Smith",new ArrayList<>()));
+        this.users = new ArrayList<>();
+        users.add(new User(1, "John Doe",new ArrayList<>()));
+        users.add(new User(2, "Jane Smith",new ArrayList<>()));
+        users.add(new User(3, "Jhonson",new ArrayList<>()));
     }
 
     @Override
