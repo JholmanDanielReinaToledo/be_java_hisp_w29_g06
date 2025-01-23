@@ -3,14 +3,17 @@ package com.meli.socialmeli.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meli.socialmeli.dto.FollowersDto;
 import com.meli.socialmeli.dto.SellerDto;
+import com.meli.socialmeli.dto.UserDto;
 import com.meli.socialmeli.entity.Seller;
 import com.meli.socialmeli.entity.User;
 import com.meli.socialmeli.exception.NotFoundException;
 import com.meli.socialmeli.repository.ISellerRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class SellerServiceImpl implements ISellerService{
@@ -22,18 +25,36 @@ public class SellerServiceImpl implements ISellerService{
     }
 
     @Override
-    public FollowersDto findFollowersBySeller(Integer sellerId){
-        ObjectMapper objectMapper = new ObjectMapper();
+    public FollowersDto findFollowersBySeller(Integer sellerId, String order){
+        Optional<Seller> seller = sellerRepository.findById(sellerId);
+        if (seller.isEmpty()) {
+            throw new NotFoundException("El vendedor con el id " + sellerId + " no existe.");
+        }
 
-        Seller seller = sellerRepository.findById(sellerId).orElse(null);
-        List<User> listUser = seller.getFollowers();
+        List<User> listUser = seller.get().getFollowers();
 
         if(listUser.isEmpty()){
             throw new NotFoundException("No se encontraron Folowers asociados al vendendor.");
         }
 
-        return objectMapper.convertValue(seller, FollowersDto.class);
+        if ("name_desc".equals(order)) {
+            listUser.sort(Comparator.comparing(User::getName).reversed());
+        } else {
+            listUser.sort(Comparator.comparing(User::getName));
+        }
+
+        List<UserDto> listUserDto = listUser.stream()
+                .map(user -> {
+                    UserDto userDto = new UserDto();
+                    userDto.setUser_id(user.getId());
+                    userDto.setUser_name(user.getName());
+                    return userDto;
+                })
+                .collect(Collectors.toList());
+
+        return new FollowersDto(seller.get().getId(),seller.get().getName(),listUserDto);
     }
+
 
     @Override
     public SellerDto countFollowers(Integer id) {

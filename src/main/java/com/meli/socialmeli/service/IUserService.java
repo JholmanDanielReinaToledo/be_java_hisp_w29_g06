@@ -7,4 +7,5 @@ public interface IUserService {
 
     ResponseDto followSeller(Integer userId, Integer sellerId);
     FollowedListResponseDto getFollowedList(Integer userId, String order);
+    ResponseDto unfollowSeller(Integer userId, Integer sellerId);
 }

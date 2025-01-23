@@ -1,5 +1,6 @@
 package com.meli.socialmeli.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,6 +14,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 public class PostDto {
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer id;
     @JsonProperty("user_id")
     private Integer userId;
     private LocalDate date;
@@ -20,6 +23,8 @@ public class PostDto {
     private Integer category;
     private Double price;
     @JsonProperty("has_promo")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean hasPromo;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Double discount;
 }
