@@ -4,4 +4,5 @@ import com.meli.socialmeli.dto.NumberOfProductsInSaleDto;
 
 public interface IPostService {
     NumberOfProductsInSaleDto getNumberOfProductsInSale(Integer userId);
+    void listAllProductsInSaleOfSeller(Integer userId);
 }

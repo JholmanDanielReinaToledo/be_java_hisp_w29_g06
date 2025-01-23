@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import com.meli.socialmeli.entity.Seller;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class SellerRepositoryImpl implements ISellerRepository{
     
     private List<Seller> sellers;
