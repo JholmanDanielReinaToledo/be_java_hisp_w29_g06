@@ -1,8 +1,8 @@
-package com.meli.socialmeli.dto.request;
+package com.meli.socialmeli.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.meli.socialmeli.dto.ProductDto;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class PostDto {
     @JsonProperty("user_id")
     private Integer userId;
