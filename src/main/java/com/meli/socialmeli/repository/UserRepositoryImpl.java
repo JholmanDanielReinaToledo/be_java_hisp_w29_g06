@@ -26,8 +26,6 @@ public class UserRepositoryImpl implements IUserRepository {
 
     @Override
     public boolean followSeller(User user, Seller seller) {
-        
         return user.getFollows().add(seller);
-        
     }
 }
