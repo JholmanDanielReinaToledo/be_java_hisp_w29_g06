@@ -2,6 +2,7 @@ package com.meli.socialmeli.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meli.socialmeli.dto.FollowersDto;
+import com.meli.socialmeli.dto.SellerDto;
 import com.meli.socialmeli.entity.Seller;
 import com.meli.socialmeli.entity.User;
 import com.meli.socialmeli.exception.NotFoundException;
@@ -9,6 +10,7 @@ import com.meli.socialmeli.repository.ISellerRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SellerServiceImpl implements ISellerService{
@@ -31,6 +33,17 @@ public class SellerServiceImpl implements ISellerService{
         }
 
         return objectMapper.convertValue(seller, FollowersDto.class);
+    }
+
+    @Override
+    public SellerDto countFollowers(Integer id) {
+        Optional<Seller> optionalSeller = sellerRepository.findById(id);
+        if (optionalSeller.isPresent()) {
+            Seller seller = optionalSeller.get();
+            Integer followersCount = seller.getFollowers().size();
+            return new SellerDto(seller.getId(), seller.getName(), followersCount);
+        }
+        throw new NotFoundException("El vendedor con el id " + id + " no existe.");
     }
 
 

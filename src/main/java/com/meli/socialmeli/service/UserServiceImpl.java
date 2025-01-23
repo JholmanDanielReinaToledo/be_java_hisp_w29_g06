@@ -1,15 +1,15 @@
 package com.meli.socialmeli.service;
 
-import java.util.Optional;
-
-import org.springframework.stereotype.Service;
-
 import com.meli.socialmeli.dto.ResponseDto;
 import com.meli.socialmeli.entity.Seller;
 import com.meli.socialmeli.entity.User;
 import com.meli.socialmeli.exception.NotFoundException;
 import com.meli.socialmeli.repository.ISellerRepository;
 import com.meli.socialmeli.repository.IUserRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
 @Service
 public class UserServiceImpl implements IUserService {
 
@@ -36,4 +36,5 @@ public class UserServiceImpl implements IUserService {
         this.sellerRepository.addFollower(seller.get(), user.get());
         return new ResponseDto("Vendedor seguido con éxito");
     }
+
 }

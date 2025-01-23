@@ -20,6 +20,7 @@ public class UserRepositoryImpl implements IUserRepository {
         users.add(new User(3, "Jhonson",new ArrayList<>()));
     }
 
+
     @Override
     public Optional<User> findById(Integer id) {
         return this.users.stream().filter(user -> user.getId().equals(id)).findFirst();
