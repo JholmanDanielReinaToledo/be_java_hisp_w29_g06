@@ -35,6 +35,9 @@ public class UserServiceImpl implements IUserService {
         if (seller.isEmpty()) {
             throw new NotFoundException("El vendedor con ese Id no existe");
         }
+        if(user.get().getFollows().contains(seller.get())){
+            return new ResponseDto("El usuario ya sigue al vendedor");
+        }
         this.userRepository.followSeller(user.get(), seller.get());
         this.sellerRepository.addFollower(seller.get(), user.get());
         return new ResponseDto("Vendedor seguido con éxito");
