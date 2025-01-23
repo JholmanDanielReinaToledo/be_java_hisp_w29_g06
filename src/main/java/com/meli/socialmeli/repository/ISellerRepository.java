@@ -9,6 +9,4 @@ import com.meli.socialmeli.entity.User;
 public interface ISellerRepository {
     public Optional<Seller> findById(Integer id);
 
-    List<User> searchFollowersBySeller(Integer sellerId);
-    String searchSellerById(Integer sellerId);
 }

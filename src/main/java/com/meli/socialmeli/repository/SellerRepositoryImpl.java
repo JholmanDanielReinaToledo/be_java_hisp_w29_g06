@@ -18,15 +18,5 @@ public class SellerRepositoryImpl implements ISellerRepository {
         return this.sellers.stream().filter(seller -> seller.getId().equals(id)).findFirst();
     }
 
-    @Override
-    public List<User> searchFollowersBySeller(Integer sellerId) {
-        return sellers.stream().filter(seller -> seller.getId().equals(sellerId)).findFirst().get().getFollowers();
-    }
-
-    @Override
-    public String searchSellerById(Integer sellerId) {
-        return sellers.stream().filter(seller -> seller.getId().equals(sellerId)).findFirst().get().getName();
-
-    }
 
 }

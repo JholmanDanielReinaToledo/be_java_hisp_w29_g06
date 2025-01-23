@@ -1,6 +1,8 @@
 package com.meli.socialmeli.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meli.socialmeli.dto.FollowersDto;
+import com.meli.socialmeli.entity.Seller;
 import com.meli.socialmeli.entity.User;
 import com.meli.socialmeli.exception.NotFoundException;
 import com.meli.socialmeli.repository.ISellerRepository;
@@ -17,14 +19,16 @@ public class SellerServiceImpl implements ISellerService{
 
     @Override
     public FollowersDto findFollowersBySeller(Integer sellerId){
-        List<User> listUser = sellerRepository.searchFollowersBySeller(sellerId);
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        Seller seller = sellerRepository.findById(sellerId).orElse(null);
+        List<User> listUser = seller.getFollowers();
+
         if(listUser.isEmpty()){
             throw new NotFoundException("No se encontraron Folowers asociados al vendendor.");
         }
 
-        String sellerName = sellerRepository.searchSellerById(sellerId);
-
-        return new FollowersDto(sellerId,sellerName,listUser);
+        return objectMapper.convertValue(seller, FollowersDto.class);
     }
 
 
