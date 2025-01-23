@@ -2,6 +2,7 @@ package com.meli.socialmeli.controller;
 
 import com.meli.socialmeli.dto.NumberOfProductsInSaleDto;
 import com.meli.socialmeli.dto.request.PostDto;
+import com.meli.socialmeli.dto.response.PostFromFollowedDto;
 import com.meli.socialmeli.dto.response.ResponseWrapperDto;
 import com.meli.socialmeli.service.IPostService;
 import com.meli.socialmeli.service.PostServiceImpl;
@@ -40,6 +41,11 @@ public class PostController {
     public ResponseEntity<?> getNumberOfProductsInSaleOfSeller(@RequestParam(name="user_id") Integer userId) {
         NumberOfProductsInSaleDto dto = postService.getNumberOfProductsInSale(userId);
         return new ResponseEntity<NumberOfProductsInSaleDto>(dto, HttpStatus.OK);
+    }
+
+    @GetMapping("/followed/{userId}/list")
+    public ResponseEntity<PostFromFollowedDto> getPostsFromFollowedUsers(@PathVariable Integer userId) {
+        return ResponseEntity.status(HttpStatus.OK).body(postService.getPostsFromFollowedUsers(userId));
     }
 
 }

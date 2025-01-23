@@ -32,4 +32,10 @@ public class ExceptionController {
         return new ResponseEntity<>(exceptionDto, HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(NoSellersFollowedException.class)
+    public ResponseEntity<ExceptionDto> noSellersFollowed(NoSellersFollowedException e){
+        ExceptionDto exceptionDto = new ExceptionDto(e.getMessage());
+        return new ResponseEntity<>(exceptionDto, HttpStatus.BAD_REQUEST);
+    }
+
 }

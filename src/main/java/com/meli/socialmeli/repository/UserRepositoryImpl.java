@@ -15,6 +15,9 @@ public class UserRepositoryImpl implements IUserRepository {
 
     public UserRepositoryImpl() {
         this.users = new ArrayList<>();
+        this.users.add(
+                new User(123, "Juan", new ArrayList<>())
+        );
     }
 
     @Override

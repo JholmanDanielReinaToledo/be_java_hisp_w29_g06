@@ -3,22 +3,26 @@ package com.meli.socialmeli.service;
 
 import com.meli.socialmeli.dto.request.PostDto;
 import com.meli.socialmeli.dto.ProductDto;
+import com.meli.socialmeli.dto.response.PostFromFollowedDto;
 import com.meli.socialmeli.entity.Post;
 import com.meli.socialmeli.entity.Product;
 import com.meli.socialmeli.entity.Seller;
 import com.meli.socialmeli.entity.User;
 import com.meli.socialmeli.dto.response.ResponseWrapperDto;
 import com.meli.socialmeli.exception.ConflictException;
+import com.meli.socialmeli.exception.NoSellersFollowedException;
 import com.meli.socialmeli.exception.NotFoundException;
-import com.meli.socialmeli.exception.UnauthorizedException;
 import com.meli.socialmeli.repository.IPostRepository;
 import com.meli.socialmeli.repository.IProductRepository;
 import com.meli.socialmeli.repository.ISellerRepository;
 import com.meli.socialmeli.repository.IUserRepository;
+
 import org.springframework.stereotype.Service;
+
 
 import com.meli.socialmeli.dto.NumberOfProductsInSaleDto;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -116,14 +120,53 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
+    public PostFromFollowedDto getPostsFromFollowedUsers(Integer userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
+
+        if (user.getFollows().isEmpty()) {
+            throw new NoSellersFollowedException("User does not follow any seller.");
+        }
+
+        List<Post> postList = postRepository.getPostsBySellers(user.getFollows());
+        List<PostDto> postDtoList = postList.stream().map(post -> PostDto.builder()
+                .userId(post.getSeller().getId())
+                .id(post.getId())
+                .date(post.getDate())
+                .product(ProductDto.builder()
+                        .productId(post.getProduct().getId())
+                        .productName(post.getProduct().getName())
+                        .type(post.getProduct().getType())
+                        .brand(post.getProduct().getBrand())
+                        .color(post.getProduct().getColor())
+                        .notes(post.getProduct().getNotes())
+                        .build())
+                .category(post.getCategory())
+                .price(post.getPrice())
+                .hasPromo(post.getHasPromo())
+                .discount(post.getDiscount())
+                .build())
+                .sorted(
+                        (p1, p2) -> p2.getDate().compareTo(p1.getDate())
+                )
+                .toList();
+
+        return PostFromFollowedDto.builder()
+                .userId(user.getId())
+                .posts(postDtoList)
+                .build();
+
+    }
+
+    @Override
     public NumberOfProductsInSaleDto getNumberOfProductsInSale(Integer userId) {
 
         if (userRepository.findById(userId).isPresent()){
             String name = userRepository.findById(userId).get().getName();
             Long count = postRepository.getNumberOfProductsInSale(userId);
             return new NumberOfProductsInSaleDto(userId,name,count);
-        } else {
-            throw new NotFoundException("User not found.");
         }
+        throw new NotFoundException("User not found.");
     }
+
+
 }
