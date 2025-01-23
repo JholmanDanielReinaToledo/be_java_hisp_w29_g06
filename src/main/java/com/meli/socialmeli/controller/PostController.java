@@ -1,13 +1,14 @@
 package com.meli.socialmeli.controller;
-
-import com.meli.socialmeli.dto.NumberOfProductsInSaleDto;
-import com.meli.socialmeli.dto.request.PostDto;
-import com.meli.socialmeli.dto.response.ResponseWrapperDto;
-import com.meli.socialmeli.service.IPostService;
-import com.meli.socialmeli.service.PostServiceImpl;
+import com.meli.socialmeli.dto.response.ProductsOfSellerDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.meli.socialmeli.dto.NumberOfProductsInSaleDto;
+import com.meli.socialmeli.dto.PostDto;
+import com.meli.socialmeli.dto.response.ResponseWrapperDto;
+import com.meli.socialmeli.service.IPostService;
+import com.meli.socialmeli.service.PostServiceImpl;
 
 
 @RestController
@@ -42,4 +43,8 @@ public class PostController {
         return new ResponseEntity<NumberOfProductsInSaleDto>(dto, HttpStatus.OK);
     }
 
+    @GetMapping("/promo-post/list")
+    public ResponseEntity<ProductsOfSellerDto> listAllProductsInSaleOfSeller(@RequestParam("user_id") Integer userId) {
+        return new ResponseEntity<>(postService.listAllProductsInSaleOfSeller(userId), HttpStatus.OK);
+    }
 }
