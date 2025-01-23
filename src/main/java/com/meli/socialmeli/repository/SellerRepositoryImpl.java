@@ -19,6 +19,7 @@ public class SellerRepositoryImpl implements ISellerRepository{
         sellers.add(new Seller(1, "Pepe1", new ArrayList<>()));
         sellers.add(new Seller(2, "Pepe2", new ArrayList<>()));
         sellers.add(new Seller(3, "Pepe3", new ArrayList<>()));
+        sellers.add(new Seller(234, "Pepe3", new ArrayList<>()));
     }
 
     @Override

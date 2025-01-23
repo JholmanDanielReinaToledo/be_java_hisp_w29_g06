@@ -16,6 +16,9 @@ public class UserRepositoryImpl implements IUserRepository {
 
     public UserRepositoryImpl() {
         this.users = new ArrayList<>();
+        this.users.add(
+                new User(123, "Juan", new ArrayList<>())
+        );
         users.add(new User(1, "John Doe",new ArrayList<>()));
         users.add(new User(2, "Jane Smith",new ArrayList<>()));
         users.add(new User(3, "Jhonson",new ArrayList<>()));
