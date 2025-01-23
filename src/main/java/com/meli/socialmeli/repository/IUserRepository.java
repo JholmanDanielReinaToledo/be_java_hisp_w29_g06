@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface IUserRepository {
     Optional<User> findById(Integer id);
     boolean followSeller(User user, Seller seller);
+    boolean userFollowsSeller(User user, Seller seller);
 }

@@ -6,5 +6,5 @@ import com.meli.socialmeli.dto.ResponseDto;
 public interface IUserService {
 
     ResponseDto followSeller(Integer userId, Integer sellerId);
-    FollowedListResponseDto getFollowedList(Integer userId);
+    FollowedListResponseDto getFollowedList(Integer userId, String order);
 }
