@@ -14,9 +14,7 @@ public class UserRepositoryImpl implements IUserRepository {
     private List<User> users;
 
     public UserRepositoryImpl() {
-        users = new ArrayList<>();
-        users.add(new User(1, "John Doe", new ArrayList<>()));
-        users.add(new User(2, "Jane Smith", new ArrayList<>()));
+        this.users = new ArrayList<>();
     }
 
 
@@ -27,6 +25,8 @@ public class UserRepositoryImpl implements IUserRepository {
 
     @Override
     public boolean followSeller(User user, Seller seller) {
+
         return user.getFollows().add(seller);
+
     }
 }
