@@ -16,8 +16,9 @@ public class UserServiceImpl implements IUserService {
     private IUserRepository userRepository;
     private ISellerRepository sellerRepository;
 
-    public UserServiceImpl(IUserRepository userRepository) {
+    public UserServiceImpl(IUserRepository userRepository, ISellerRepository sellerRepository) {
         this.userRepository = userRepository;
+        this.sellerRepository = sellerRepository;
     }
 
 
@@ -32,6 +33,7 @@ public class UserServiceImpl implements IUserService {
             throw new NotFoundException("El vendedor con ese Id no existe");
         }
         this.userRepository.followSeller(user.get(), seller.get());
+        this.sellerRepository.addFollower(seller.get(), user.get());
         return new ResponseDto("Vendedor seguido con éxito");
     }
 }
