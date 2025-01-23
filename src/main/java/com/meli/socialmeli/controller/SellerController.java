@@ -24,4 +24,7 @@ public class SellerController {
         return new ResponseEntity<>(sellerDto, HttpStatus.OK);
     }
 
+
+
+
 }

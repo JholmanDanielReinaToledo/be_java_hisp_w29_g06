@@ -1,13 +1,16 @@
 package com.meli.socialmeli.service;
 
+import com.meli.socialmeli.dto.FollowedDto;
 import com.meli.socialmeli.dto.ResponseDto;
 import com.meli.socialmeli.entity.Seller;
 import com.meli.socialmeli.entity.User;
 import com.meli.socialmeli.exception.NotFoundException;
 import com.meli.socialmeli.repository.ISellerRepository;
 import com.meli.socialmeli.repository.IUserRepository;
+import com.meli.socialmeli.repository.SellerRepositoryImpl;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,8 +19,9 @@ public class UserServiceImpl implements IUserService {
     private IUserRepository userRepository;
     private ISellerRepository sellerRepository;
 
-    public UserServiceImpl(IUserRepository userRepository) {
+    public UserServiceImpl(IUserRepository userRepository, ISellerRepository sellerRepository) {
         this.userRepository = userRepository;
+        this.sellerRepository = sellerRepository;
     }
 
 
@@ -33,5 +37,15 @@ public class UserServiceImpl implements IUserService {
         }
         this.userRepository.followSeller(user.get(), seller.get());
         return new ResponseDto("Vendedor seguido con éxito");
+    }
+
+    @Override
+    public FollowedDto getFollowedById(Integer userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            throw new NotFoundException("El usuario con ese Id no existe");
+        }
+        List<Seller> sellers = user.get().getFollows();
+        return new FollowedDto(userId,user.get().getName(),sellers);
     }
 }

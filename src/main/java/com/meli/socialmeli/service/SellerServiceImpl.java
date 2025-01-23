@@ -1,6 +1,5 @@
 package com.meli.socialmeli.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meli.socialmeli.dto.SellerDto;
 import com.meli.socialmeli.entity.Seller;
 import com.meli.socialmeli.exception.NotFoundException;
@@ -27,4 +26,5 @@ public class SellerServiceImpl implements ISellerService{
             return new SellerDto(seller.getId(), seller.getName(), followersCount);
         }
         throw new NotFoundException("El vendedor con el id " + id + " no existe.");
-    }}
+    }
+}
