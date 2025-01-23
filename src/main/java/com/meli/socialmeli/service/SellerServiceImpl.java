@@ -6,9 +6,11 @@ import com.meli.socialmeli.entity.Seller;
 import com.meli.socialmeli.entity.User;
 import com.meli.socialmeli.exception.NotFoundException;
 import com.meli.socialmeli.repository.ISellerRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class SellerServiceImpl implements ISellerService{
 
     private ISellerRepository sellerRepository;
