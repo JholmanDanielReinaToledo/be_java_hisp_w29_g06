@@ -36,4 +36,24 @@ public class UserServiceImpl implements IUserService {
         this.sellerRepository.addFollower(seller.get(), user.get());
         return new ResponseDto("Vendedor seguido con éxito");
     }
+
+    @Override
+    public ResponseDto unfollowSeller(Integer userId, Integer sellerId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            throw new NotFoundException("El usuario con ese Id no existe");
+        }
+        Optional<Seller> seller = sellerRepository.findById(sellerId);
+        if (seller.isEmpty()) {
+            throw new NotFoundException("El vendedor con ese Id no existe");
+        }
+        if (this.sellerRepository.isFollower(seller.get(), user.get())) {
+            this.userRepository.unfollowSeller(user.get(), seller.get());
+            this.sellerRepository.removeFollower(seller.get(), user.get());
+        }else{
+            throw new NotFoundException("El usuario no esta siguiendo este vendedor");
+        }
+        
+        return new ResponseDto("Vendedor dejado de seguir con éxito");
+    }
 }

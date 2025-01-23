@@ -11,6 +11,7 @@ import com.meli.socialmeli.dto.ResponseDto;
 import com.meli.socialmeli.service.IUserService;
 import com.meli.socialmeli.service.UserServiceImpl;
 
+
 @RequestMapping("/users/")
 @RestController
 public class UserController {
@@ -26,5 +27,12 @@ public class UserController {
         ResponseDto response = this.userService.followSeller(userId, sellerId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @PostMapping("/{userId}/unfollow/{userIdToUnfollow}")
+    public ResponseEntity<ResponseDto> postMethodName(@PathVariable Integer userId, @PathVariable(name="userIdToUnfollow") Integer sellerId) {
+        ResponseDto response = this.userService.unfollowSeller(userId, sellerId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    
     
 }
