@@ -18,7 +18,11 @@ public class UserRepositoryImpl implements IUserRepository {
         this.users.add(
                 new User(123, "Juan", new ArrayList<>())
         );
+        users.add(new User(1, "John Doe",new ArrayList<>()));
+        users.add(new User(2, "Jane Smith",new ArrayList<>()));
+        users.add(new User(3, "Jhonson",new ArrayList<>()));
     }
+
 
     @Override
     public Optional<User> findById(Integer id) {
@@ -27,8 +31,6 @@ public class UserRepositoryImpl implements IUserRepository {
 
     @Override
     public boolean followSeller(User user, Seller seller) {
-
         return user.getFollows().add(seller);
-
     }
 }

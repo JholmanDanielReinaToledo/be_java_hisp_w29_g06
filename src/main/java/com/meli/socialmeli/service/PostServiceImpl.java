@@ -1,25 +1,23 @@
 package com.meli.socialmeli.service;
 
+import com.meli.socialmeli.dto.response.ProductsOfSellerDto;
+import com.meli.socialmeli.entity.Seller;
+import com.meli.socialmeli.entity.User;
+import com.meli.socialmeli.repository.ISellerRepository;
+import org.springframework.stereotype.Service;
 
-import com.meli.socialmeli.dto.request.PostDto;
+import com.meli.socialmeli.dto.PostDto;
 import com.meli.socialmeli.dto.ProductDto;
 import com.meli.socialmeli.dto.response.PostFromFollowedDto;
 import com.meli.socialmeli.entity.Post;
 import com.meli.socialmeli.entity.Product;
-import com.meli.socialmeli.entity.Seller;
-import com.meli.socialmeli.entity.User;
 import com.meli.socialmeli.dto.response.ResponseWrapperDto;
 import com.meli.socialmeli.exception.ConflictException;
 import com.meli.socialmeli.exception.NoSellersFollowedException;
 import com.meli.socialmeli.exception.NotFoundException;
 import com.meli.socialmeli.repository.IPostRepository;
 import com.meli.socialmeli.repository.IProductRepository;
-import com.meli.socialmeli.repository.ISellerRepository;
 import com.meli.socialmeli.repository.IUserRepository;
-
-import org.springframework.stereotype.Service;
-
-
 import com.meli.socialmeli.dto.NumberOfProductsInSaleDto;
 
 import java.util.List;
@@ -47,7 +45,6 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public ResponseWrapperDto addPost(PostDto post) {
-
         Optional<Seller> seller = this.sellerRepository.findById(post.getUserId());
 
         if (seller.isEmpty()) {
@@ -55,14 +52,14 @@ public class PostServiceImpl implements IPostService {
         }
 
         ProductDto productDto = post.getProduct();
-        Product productToSave = new Product(
-                productDto.getProductId(),
-                productDto.getProductName(),
-                productDto.getType(),
-                productDto.getBrand(),
-                productDto.getColor(),
-                productDto.getNotes()
-        );
+        Product productToSave = Product.builder()
+                .id(productDto.getProductId())
+                .name(productDto.getProductName())
+                .type(productDto.getType())
+                .brand(productDto.getBrand())
+                .color(productDto.getColor())
+                .notes(productDto.getNotes())
+                .build();
 
         Optional<Product> productSaved = this.productRepository.add(productToSave);
 
@@ -159,7 +156,7 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public NumberOfProductsInSaleDto getNumberOfProductsInSale(Integer userId) {
-
+        
         if (userRepository.findById(userId).isPresent()){
             String name = userRepository.findById(userId).get().getName();
             Long count = postRepository.getNumberOfProductsInSale(userId);
@@ -168,5 +165,39 @@ public class PostServiceImpl implements IPostService {
         throw new NotFoundException("User not found.");
     }
 
+    @Override
+    public ProductsOfSellerDto listAllProductsInSaleOfSeller(Integer userId) {
+        Optional<Seller> seller = sellerRepository.findById(userId);
+        if (seller.isEmpty()) {
+            throw new NotFoundException("User not found.");
+        }
 
+        List<Post> postsInSale = this.postRepository.findPostsInSaleByUserId(userId);
+
+        List<PostDto> postsInSaleDto = postsInSale.stream().map(p -> {
+            return PostDto.builder()
+                    .userId(p.getSeller().getId())
+                    .date(p.getDate())
+                    .price(p.getPrice())
+                    .hasPromo(p.getHasPromo())
+                    .discount(p.getDiscount())
+                    .category(p.getCategory())
+                    .product(ProductDto.builder()
+                            .productId(p.getProduct().getId())
+                            .productName(p.getProduct().getName())
+                            .type(p.getProduct().getType())
+                            .brand(p.getProduct().getBrand())
+                            .color(p.getProduct().getColor())
+                            .notes(p.getProduct().getNotes())
+                            .build()
+                    )
+                    .build();
+        }).toList();
+
+        return new ProductsOfSellerDto(
+                seller.get().getId(),
+                seller.get().getName(),
+                postsInSaleDto
+        );
+    }
 }

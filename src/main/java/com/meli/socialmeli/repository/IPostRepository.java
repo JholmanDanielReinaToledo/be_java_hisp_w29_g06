@@ -11,4 +11,5 @@ public interface IPostRepository {
     Long getNumberOfProductsInSale(Integer user_id);
     Optional<Post> findById(Integer id);
     List<Post> getPostsBySellers(List<Seller> sellers);
+    List<Post> findPostsInSaleByUserId(Integer userId);
 }

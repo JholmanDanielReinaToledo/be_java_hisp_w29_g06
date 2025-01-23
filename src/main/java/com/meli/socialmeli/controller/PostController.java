@@ -1,15 +1,16 @@
 package com.meli.socialmeli.controller;
 
 import com.meli.socialmeli.dto.NumberOfProductsInSaleDto;
-import com.meli.socialmeli.dto.request.PostDto;
 import com.meli.socialmeli.dto.response.PostFromFollowedDto;
 import com.meli.socialmeli.dto.response.ResponseWrapperDto;
 import com.meli.socialmeli.service.IPostService;
 import com.meli.socialmeli.service.PostServiceImpl;
+import com.meli.socialmeli.dto.response.ProductsOfSellerDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.meli.socialmeli.dto.PostDto;
 
 @RestController
 @RequestMapping("/products")
@@ -42,10 +43,12 @@ public class PostController {
         NumberOfProductsInSaleDto dto = postService.getNumberOfProductsInSale(userId);
         return new ResponseEntity<NumberOfProductsInSaleDto>(dto, HttpStatus.OK);
     }
-
-    @GetMapping("/followed/{userId}/list")
+@GetMapping("/followed/{userId}/list")
     public ResponseEntity<PostFromFollowedDto> getPostsFromFollowedUsers(@PathVariable Integer userId) {
         return ResponseEntity.status(HttpStatus.OK).body(postService.getPostsFromFollowedUsers(userId));
     }
-
+    @GetMapping("/promo-post/list")
+    public ResponseEntity<ProductsOfSellerDto> listAllProductsInSaleOfSeller(@RequestParam("user_id") Integer userId) {
+        return new ResponseEntity<>(postService.listAllProductsInSaleOfSeller(userId), HttpStatus.OK);
+    }
 }
