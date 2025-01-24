@@ -2,6 +2,7 @@ package com.meli.socialmeli.controller;
 
 
 import com.meli.socialmeli.constants.Endpoints;
+import com.meli.socialmeli.dto.UserDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,6 +57,11 @@ public class UserController {
             @RequestParam(required = false, defaultValue = "name_asc") String order
     ) {
         return new ResponseEntity<>(userService.getFollowedList(userId, order), HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
+        return new ResponseEntity<>(userService.add(userDto), HttpStatus.CREATED);
     }
 
 }
