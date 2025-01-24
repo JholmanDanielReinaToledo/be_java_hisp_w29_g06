@@ -1,5 +1,6 @@
 package com.meli.socialmeli.service;
 
+import com.meli.socialmeli.constants.Messages;
 import com.meli.socialmeli.dto.FollowersDto;
 import com.meli.socialmeli.dto.SellerDto;
 import com.meli.socialmeli.dto.UserDto;
@@ -27,13 +28,13 @@ public class SellerServiceImpl implements ISellerService{
     public FollowersDto getFollowersBySellerId(Integer sellerId, String order){
         Optional<Seller> seller = sellerRepository.getById(sellerId);
         if (seller.isEmpty()) {
-            throw new NotFoundException("El vendedor con el id " + sellerId + " no existe.");
+            throw new NotFoundException(Messages.SELLER_NOT_FOUND.replace("%s", sellerId.toString()));
         }
 
         List<User> listUser = seller.get().getFollowers();
 
         if(listUser.isEmpty()){
-            throw new NotFoundException("No se encontraron Folowers asociados al vendendor.");
+            throw new NotFoundException(Messages.NO_FOLLOWERS_ASSOCIATED);
         }
 
         if ("name_desc".equals(order)) {
@@ -63,7 +64,7 @@ public class SellerServiceImpl implements ISellerService{
             Integer followersCount = seller.getFollowers().size();
             return new SellerDto(seller.getId(), seller.getName(), followersCount);
         }
-        throw new NotFoundException("El vendedor con el id " + id + " no existe.");
+        throw new NotFoundException(Messages.SELLER_NOT_FOUND.replace("%s", id.toString()));
     }
 
 

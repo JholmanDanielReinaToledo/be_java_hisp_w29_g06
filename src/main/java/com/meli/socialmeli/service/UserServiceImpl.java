@@ -3,6 +3,7 @@ package com.meli.socialmeli.service;
 import java.util.List;
 import java.util.Optional;
 
+import com.meli.socialmeli.constants.Messages;
 import org.springframework.stereotype.Service;
 
 import com.meli.socialmeli.dto.FollowedDto;
@@ -31,55 +32,56 @@ public class UserServiceImpl implements IUserService {
     @Override
     public ResponseDto followSeller(Integer userId, Integer sellerId) {
         if (userId.equals(sellerId)) {
-            throw new ConflictException("No puedes seguirte a ti mismo");
+            throw new ConflictException(Messages.CAN_NOT_FOLLOW_YOURSELF);
         }
         Optional<User> user = userRepository.getById(userId);
         if (user.isEmpty()) {
-            throw new NotFoundException("El usuario con ese Id no existe");
+            throw new NotFoundException(Messages.USER_NOT_FOUND.replace("%s", userId.toString()));
         }
         Optional<Seller> seller = sellerRepository.getById(sellerId);
         if (seller.isEmpty()) {
-            throw new NotFoundException("El vendedor con ese Id no existe");
+            throw new NotFoundException(Messages.SELLER_NOT_FOUND.replace("%s", sellerId.toString()));
         }
         if (this.userRepository.isFollower(user.get(), seller.get())) {
-            throw new ConflictException("Ya sigues a este vendedor");
+            throw new ConflictException(Messages.USER_ALREADY_FOLLOWED);
         }
         this.userRepository.followSeller(user.get(), seller.get());
         this.sellerRepository.addFollower(seller.get(), user.get());
-        return new ResponseDto("Vendedor seguido con éxito");
+
+        return ResponseDto.builder().message(Messages.SUCCESS_FOLLOW).build();
     }
 
     @Override
     public ResponseDto unfollowSeller(Integer userId, Integer sellerId) {
         Optional<User> user = userRepository.getById(userId);
         if (user.isEmpty()) {
-            throw new NotFoundException("El usuario con ese Id no existe");
+            throw new NotFoundException(Messages.USER_NOT_FOUND.replace("%s", userId.toString()));
         }
         Optional<Seller> seller = sellerRepository.getById(sellerId);
         if (seller.isEmpty()) {
-            throw new NotFoundException("El vendedor con ese Id no existe");
+            throw new NotFoundException(Messages.SELLER_NOT_FOUND.replace("%s", sellerId.toString()));
         }
         if (this.sellerRepository.isFollower(seller.get(), user.get())) {
             this.userRepository.unfollowSeller(user.get(), seller.get());
             this.sellerRepository.removeFollower(seller.get(), user.get());
         } else {
-            throw new NotFoundException("El usuario no esta siguiendo este vendedor");
+            throw new NotFoundException(Messages.USER_NOT_FOLLOWING_SELLER);
         }
 
-        return new ResponseDto("Vendedor dejado de seguir con éxito");
+        return new ResponseDto(Messages.SUCCESS_UNFOLLOW);
     }
 
     @Override
     public FollowedListResponseDto getFollowedList(Integer userId, String order) {
         Optional<User> user = userRepository.getById(userId);
         if (user.isEmpty()) {
-            throw new NotFoundException("El usuario con ese Id no existe");
+            throw new NotFoundException(Messages.USER_NOT_FOUND.replace("%s", userId.toString()));
         }
 
         List<Seller> sellers = user.get().getFollows();
 
         if (sellers.isEmpty()) {
-            throw new NotFoundException("No sigue vendedores");
+            throw new NotFoundException(Messages.USER_WITHOUT_FOLLOWED);
         }
 
         if (order != null) {

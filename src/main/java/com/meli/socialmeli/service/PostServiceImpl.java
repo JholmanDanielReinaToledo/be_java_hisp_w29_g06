@@ -1,10 +1,13 @@
 package com.meli.socialmeli.service;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.meli.socialmeli.constants.Messages;
+import com.meli.socialmeli.constants.PostOrder;
 import com.meli.socialmeli.dto.response.ResponseDto;
 import org.springframework.stereotype.Service;
 
@@ -50,7 +53,7 @@ public class PostServiceImpl implements IPostService {
         Optional<Seller> seller = this.sellerRepository.getById(post.getUserId());
 
         if (seller.isEmpty()) {
-            throw new NotFoundException("No se encontro un user con el id: " + post.getUserId());
+            throw new NotFoundException(Messages.USER_NOT_FOUND.replace("%s", post.getUserId().toString()));
         }
 
         ProductDto productDto = post.getProduct();
@@ -66,7 +69,7 @@ public class PostServiceImpl implements IPostService {
         Optional<Product> productSaved = this.productRepository.save(productToSave);
 
         if (productSaved.isEmpty()) {
-            productSaved = this.productRepository.getById(productDto.getProductId());
+            throw new ConflictException(Messages.POST_CONFLICT);
         }
 
         Post postToSave = Post.builder()
@@ -81,15 +84,15 @@ public class PostServiceImpl implements IPostService {
         Optional<Post> postSaved = this.postRepository.save(postToSave);
 
         if (postSaved.isEmpty()) {
-            throw new ConflictException("Error adding post, already exist");
+            throw new ConflictException(Messages.POST_CONFLICT);
         }
 
-        return ResponseDto.builder().message("Success").build();
+        return ResponseDto.builder().message(Messages.SUCCESS).build();
     }
 
     @Override
     public ResponseDto addPromoPost(PostDto promoPostDto) {
-        Seller seller = sellerRepository.getById(promoPostDto.getUserId()).orElseThrow(() -> new NotFoundException("User not found"));
+        Seller seller = sellerRepository.getById(promoPostDto.getUserId()).orElseThrow(() -> new NotFoundException(Messages.USER_NOT_FOUND.replace("%s", promoPostDto.getUserId().toString())));
 
         Product product = productRepository.save(
                 Product.builder()
@@ -100,7 +103,7 @@ public class PostServiceImpl implements IPostService {
                         .notes(promoPostDto.getProduct().getNotes())
                         .type(promoPostDto.getProduct().getType())
                         .build()
-        ).orElseThrow(() -> new ConflictException("Error, producto asociado a ese id ya existente"));
+        ).orElseThrow(() -> new ConflictException(Messages.PRODUCT_CONFLICT));
 
 
         Post post = Post.builder()
@@ -114,30 +117,32 @@ public class PostServiceImpl implements IPostService {
                 .build();
 
         if(postRepository.save(post).isEmpty())
-            throw new ConflictException("Error adding post, already exist");
+            throw new ConflictException(Messages.POST_CONFLICT);
 
-        return  ResponseDto.builder().message("Success").build();
+        return  ResponseDto.builder().message(Messages.SUCCESS).build();
+    }
+
+    private PostOrder getPostOrder(Integer orderValue) {
+        return Arrays.stream(PostOrder.values())
+                .filter(order -> order.getValueFromOrder() == orderValue)
+                .findFirst()
+                .orElse(PostOrder.NONE);
     }
 
     @Override
     public PostFromFollowedDto getPostsFromFollowedUsers(Integer userId, Integer order) {
-        User user = userRepository.getById(userId).orElseThrow(() -> new NotFoundException("User not found"));
+        User user = userRepository.getById(userId).orElseThrow(() -> new NotFoundException(Messages.USER_NOT_FOUND.replace("%s", userId.toString())));
         if (user.getFollows().isEmpty()) {
-            throw new NoSellersFollowedException("User does not follow any seller.");
+            throw new NoSellersFollowedException(Messages.USER_WITHOUT_FOLLOWERS);
         }
 
         List<Post> postList = postRepository.getPostsBySellers(user.getFollows());
-        if (order == 1) {
-            postList = postList.stream()
-                .sorted(Comparator.comparing(Post::getDate))
-                .collect(Collectors.toList());
-        }else if (order == 2) {
-            postList = postList.stream()
-                .sorted(Comparator.comparing(Post::getDate).reversed())
-                .collect(Collectors.toList());
-        }
 
-        List<PostDto> postDtoList = postList.stream().map(post -> PostDto.builder()
+        Comparator<Post> comparator = getPostOrder(order).getComparator();
+
+        List<PostDto> postDtoList = postList.stream()
+                .sorted(comparator)
+                .map(post -> PostDto.builder()
                 .userId(post.getSeller().getId())
                 .id(post.getId())
                 .date(post.getDate())
@@ -154,9 +159,6 @@ public class PostServiceImpl implements IPostService {
                 .hasPromo(post.getHasPromo())
                 .discount(post.getDiscount())
                 .build())
-                .sorted(
-                        (p1, p2) -> p2.getDate().compareTo(p1.getDate())
-                )
                 .toList();
 
         return PostFromFollowedDto.builder()
@@ -174,37 +176,35 @@ public class PostServiceImpl implements IPostService {
             Long count = postRepository.getCountPostInSaleBySellerId(userId);
             return new NumberOfProductsInSaleDto(userId,name,count);
         }
-        throw new NotFoundException("User not found.");
+        throw new NotFoundException(Messages.USER_NOT_FOUND.replace("%s", userId.toString()));
     }
 
     @Override
     public ProductsOfSellerDto getAllProductsInSaleBySellerId(Integer userId) {
         Optional<Seller> seller = sellerRepository.getById(userId);
         if (seller.isEmpty()) {
-            throw new NotFoundException("User not found.");
+            throw new NotFoundException(Messages.USER_NOT_FOUND.replace("%s", userId.toString()));
         }
 
         List<Post> postsInSale = this.postRepository.getPostsInSaleBySellerId(seller.get().getId());
 
-        List<PostDto> postsInSaleDto = postsInSale.stream().map(p -> {
-            return PostDto.builder()
-                    .userId(p.getSeller().getId())
-                    .date(p.getDate())
-                    .price(p.getPrice())
-                    .hasPromo(p.getHasPromo())
-                    .discount(p.getDiscount())
-                    .category(p.getCategory())
-                    .product(ProductDto.builder()
-                            .productId(p.getProduct().getId())
-                            .productName(p.getProduct().getName())
-                            .type(p.getProduct().getType())
-                            .brand(p.getProduct().getBrand())
-                            .color(p.getProduct().getColor())
-                            .notes(p.getProduct().getNotes())
-                            .build()
-                    )
-                    .build();
-        }).toList();
+        List<PostDto> postsInSaleDto = postsInSale.stream().map(p -> PostDto.builder()
+        .userId(p.getSeller().getId())
+        .date(p.getDate())
+        .price(p.getPrice())
+        .hasPromo(p.getHasPromo())
+        .discount(p.getDiscount())
+        .category(p.getCategory())
+        .product(ProductDto.builder()
+                .productId(p.getProduct().getId())
+                .productName(p.getProduct().getName())
+                .type(p.getProduct().getType())
+                .brand(p.getProduct().getBrand())
+                .color(p.getProduct().getColor())
+                .notes(p.getProduct().getNotes())
+                .build()
+        )
+        .build()).toList();
 
         return new ProductsOfSellerDto(
                 seller.get().getId(),

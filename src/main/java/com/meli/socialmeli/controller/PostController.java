@@ -1,5 +1,7 @@
 package com.meli.socialmeli.controller;
 
+import com.meli.socialmeli.constants.Endpoints;
+import com.meli.socialmeli.constants.OrderType;
 import com.meli.socialmeli.dto.response.ResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +21,7 @@ import com.meli.socialmeli.service.IPostService;
 import com.meli.socialmeli.service.PostServiceImpl;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping(Endpoints.BASE_POSTS)
 public class PostController {
 
     private IPostService postService;
@@ -28,38 +30,31 @@ public class PostController {
         this.postService = postService;
     }
 
-    @PostMapping("/post")
+    @PostMapping(Endpoints.POSTS_POST)
     public ResponseEntity<ResponseDto> addPost(@RequestBody PostDto postDto) {
         return new ResponseEntity<>(postService.addPost(postDto), HttpStatus.CREATED);
     }
 
-    @PostMapping("/promo-post")
+    @PostMapping(Endpoints.POSTS_PROMO_POST)
     public ResponseEntity<ResponseDto> createPromoPost(@RequestBody PostDto promoPostDto) {
         return ResponseEntity.status(HttpStatus.OK).body(postService.addPromoPost(promoPostDto));
     }
 
-    @GetMapping("/promo-post/count")
+    @GetMapping(Endpoints.POSTS_PROMO_POST_COUNT)
     public ResponseEntity<NumberOfProductsInSaleDto> getNumberOfProductsInSaleOfSeller(@RequestParam(name="user_id") Integer sellerId) {
         return new ResponseEntity<>(postService.getNumberOfProductsInSaleBySellerId(sellerId), HttpStatus.OK);
     }
 
-    @GetMapping("/followed/{userId}/list")
+    @GetMapping(Endpoints.POSTS_FOLLOWED_LIST)
     public ResponseEntity<PostFromFollowedDto> getPostsFromFollowedUsers(
             @PathVariable Integer userId,
             @RequestParam(required = false) String order
     ) {
-        if (order == null){
-            return ResponseEntity.status(HttpStatus.OK).body(postService.getPostsFromFollowedUsers(userId,0));
-        } else if(order.equals("order_asc")) {
-            return ResponseEntity.status(HttpStatus.OK).body(postService.getPostsFromFollowedUsers(userId,1));
-        } else if(order.equals("order_desc")) {
-            return ResponseEntity.status(HttpStatus.OK).body(postService.getPostsFromFollowedUsers(userId,2));
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
-        }
+        OrderType orderType = OrderType.fromString(order);
+        return ResponseEntity.status(HttpStatus.OK).body(postService.getPostsFromFollowedUsers(userId, orderType.getValue()));
     }
 
-    @GetMapping("/promo-post/list")
+    @GetMapping(Endpoints.POSTS_PROMO_LIST)
     public ResponseEntity<ProductsOfSellerDto> listAllProductsInSaleOfSeller(@RequestParam("user_id") Integer sellerId) {
         return new ResponseEntity<>(postService.getAllProductsInSaleBySellerId(sellerId), HttpStatus.OK);
     }
