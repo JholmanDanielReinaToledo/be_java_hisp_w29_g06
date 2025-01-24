@@ -1,5 +1,6 @@
 package com.meli.socialmeli.controller;
 
+
 import com.meli.socialmeli.constants.Endpoints;
 import com.meli.socialmeli.constants.OrderType;
 import com.meli.socialmeli.dto.response.ResponseDto;
@@ -17,6 +18,7 @@ import com.meli.socialmeli.dto.NumberOfProductsInSaleDto;
 import com.meli.socialmeli.dto.PostDto;
 import com.meli.socialmeli.dto.response.PostFromFollowedDto;
 import com.meli.socialmeli.dto.response.ProductsOfSellerDto;
+import com.meli.socialmeli.dto.response.ResponseDto;
 import com.meli.socialmeli.service.IPostService;
 import com.meli.socialmeli.service.PostServiceImpl;
 

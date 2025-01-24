@@ -1,5 +1,6 @@
 package com.meli.socialmeli.service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,8 +17,6 @@ import com.meli.socialmeli.exception.NotFoundException;
 import com.meli.socialmeli.repository.ISellerRepository;
 import com.meli.socialmeli.repository.IUserRepository;
 
-import java.util.Comparator;
-
 @Service
 public class UserServiceImpl implements IUserService {
 
@@ -31,9 +30,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public ResponseDto followSeller(Integer userId, Integer sellerId) {
-        if (userId.equals(sellerId)) {
-            throw new ConflictException(Messages.CAN_NOT_FOLLOW_YOURSELF);
-        }
+
         Optional<User> user = userRepository.getById(userId);
         if (user.isEmpty()) {
             throw new NotFoundException(Messages.USER_NOT_FOUND.replace("%s", userId.toString()));
