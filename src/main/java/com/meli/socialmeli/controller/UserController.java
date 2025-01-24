@@ -1,6 +1,7 @@
 package com.meli.socialmeli.controller;
 
 
+import com.meli.socialmeli.constants.Endpoints;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +17,7 @@ import com.meli.socialmeli.service.ISellerService;
 import com.meli.socialmeli.service.SellerServiceImpl;
 import com.meli.socialmeli.service.UserServiceImpl;
 
-@RequestMapping("/users")
+@RequestMapping(Endpoints.BASE_USERS)
 @RestController
 public class UserController {
 
@@ -28,12 +29,12 @@ public class UserController {
         this.sellerService = sellerService;
     }
 
-    @PostMapping("/{userId}/follow/{sellerId}")
+    @PostMapping(Endpoints.USERS_FOLLOW)
     public ResponseEntity<ResponseDto> followSeller(@PathVariable Integer userId, @PathVariable Integer sellerId ) {
         return new ResponseEntity<>(this.userService.followSeller(userId, sellerId), HttpStatus.OK);
     }
 
-    @PostMapping("/{userId}/unfollow/{userIdToUnfollow}")
+    @PostMapping(Endpoints.USERS_UNFOLLOW)
     public ResponseEntity<ResponseDto> unfollowSeller(
             @PathVariable Integer userId,
             @PathVariable(name="userIdToUnfollow") Integer sellerId
@@ -41,7 +42,7 @@ public class UserController {
         return new ResponseEntity<>(this.userService.unfollowSeller(userId, sellerId), HttpStatus.OK);
     }
 
-    @GetMapping("/{userId}/followers/list")
+    @GetMapping(Endpoints.USERS_FOLLOWERS_LIST)
     public ResponseEntity<?> listFollowersBySeller(
             @PathVariable(name="userId") Integer sellerId,
             @RequestParam(required=false, defaultValue = "name_asc") String order
@@ -49,7 +50,7 @@ public class UserController {
         return new ResponseEntity<>(sellerService.getFollowersBySellerId(sellerId, order), HttpStatus.OK);
     }
 
-    @GetMapping("{userId}/followed/list")
+    @GetMapping(Endpoints.USERS_FOLLOWED_LIST)
     public ResponseEntity<?> listFollowed(
             @PathVariable Integer userId,
             @RequestParam(required = false, defaultValue = "name_asc") String order
