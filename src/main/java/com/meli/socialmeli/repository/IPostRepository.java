@@ -12,4 +12,7 @@ public interface IPostRepository {
     Optional<Post> getById(Integer id);
     List<Post> getPostsBySellers(List<Seller> sellers);
     List<Post> getPostsInSaleBySellerId(Integer sellerId);
+    List<Post> getPostsByPrice(Double minPrice, Double maxPrice);
+    List<Post> getPostsByMinPrice(Double minPrice);
+    List<Post> getPostsByMaxPrice(Double maxPrice);
 }

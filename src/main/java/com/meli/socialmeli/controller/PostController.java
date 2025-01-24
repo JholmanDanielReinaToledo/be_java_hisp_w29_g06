@@ -22,6 +22,8 @@ import com.meli.socialmeli.dto.response.ResponseDto;
 import com.meli.socialmeli.service.IPostService;
 import com.meli.socialmeli.service.PostServiceImpl;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(Endpoints.BASE_POSTS)
 public class PostController {
@@ -59,5 +61,10 @@ public class PostController {
     @GetMapping(Endpoints.POSTS_PROMO_LIST)
     public ResponseEntity<ProductsOfSellerDto> listAllProductsInSaleOfSeller(@RequestParam("user_id") Integer sellerId) {
         return new ResponseEntity<>(postService.getAllProductsInSaleBySellerId(sellerId), HttpStatus.OK);
+    }
+
+    @GetMapping(Endpoints.POSTS_FILTER_BY_PRICE)
+    public ResponseEntity<List<PostDto>> filterPostsByPrice(@RequestParam(required = false) Double minPrice, @RequestParam(required = false) Double maxPrice) {
+        return ResponseEntity.status(HttpStatus.OK).body(postService.filterPostsByPrice(minPrice, maxPrice));
     }
 }
