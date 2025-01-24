@@ -1,6 +1,5 @@
 package com.meli.socialmeli.controller;
 
-import com.meli.socialmeli.dto.response.ResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +14,7 @@ import com.meli.socialmeli.dto.NumberOfProductsInSaleDto;
 import com.meli.socialmeli.dto.PostDto;
 import com.meli.socialmeli.dto.response.PostFromFollowedDto;
 import com.meli.socialmeli.dto.response.ProductsOfSellerDto;
+import com.meli.socialmeli.dto.response.ResponseDto;
 import com.meli.socialmeli.service.IPostService;
 import com.meli.socialmeli.service.PostServiceImpl;
 
@@ -50,9 +50,9 @@ public class PostController {
     ) {
         if (order == null){
             return ResponseEntity.status(HttpStatus.OK).body(postService.getPostsFromFollowedUsers(userId,0));
-        } else if(order.equals("order_asc")) {
+        } else if(order.equals("date_asc")) {
             return ResponseEntity.status(HttpStatus.OK).body(postService.getPostsFromFollowedUsers(userId,1));
-        } else if(order.equals("order_desc")) {
+        } else if(order.equals("date_desc")) {
             return ResponseEntity.status(HttpStatus.OK).body(postService.getPostsFromFollowedUsers(userId,2));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
