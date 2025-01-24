@@ -13,5 +13,6 @@ public class Endpoints {
     public final static String USERS_FOLLOWERS_LIST = "/{userId}/followers/list";
     public final static String USERS_FOLLOWED_LIST = "/{userId}/followed/list";
     public final static String USERS_FOLLOWERS_COUNT = "/users/{userId}/followers/count";
+    public final static String POSTS_FILTER_BY_PRICE = "/price";
 
 }
