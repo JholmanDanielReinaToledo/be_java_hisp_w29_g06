@@ -11,4 +11,5 @@ public interface ISellerRepository {
     boolean addFollower(Seller seller, User user);
     boolean isFollower(Seller seller, User user);
     boolean removeFollower(Seller seller, User user);
+    int countSellers();
 }
