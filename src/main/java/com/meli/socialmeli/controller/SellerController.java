@@ -1,13 +1,12 @@
 package com.meli.socialmeli.controller;
 
 import com.meli.socialmeli.constants.Endpoints;
+import com.meli.socialmeli.dto.CreateSellerDto;
 import com.meli.socialmeli.dto.SellerDto;
 import com.meli.socialmeli.service.ISellerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class SellerController {
@@ -16,6 +15,11 @@ public class SellerController {
 
     public SellerController(ISellerService sellerService) {
         this.sellerService = sellerService;
+    }
+
+    @PostMapping(Endpoints.BASE_SELLER)
+    public ResponseEntity<CreateSellerDto> postSeller(@RequestBody CreateSellerDto createSellerDto) {
+        return new ResponseEntity<>(sellerService.addSeller(createSellerDto), HttpStatus.CREATED);
     }
 
     @GetMapping(Endpoints.USERS_FOLLOWERS_COUNT)

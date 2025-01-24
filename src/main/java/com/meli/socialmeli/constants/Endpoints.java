@@ -3,6 +3,7 @@ package com.meli.socialmeli.constants;
 public class Endpoints {
     public final static String BASE_USERS = "/users";
     public final static String BASE_POSTS = "/products";
+    public final static String BASE_SELLER = "/sellers";
     public final static String POSTS_POST = "/post";
     public final static String POSTS_PROMO_POST = "/promo-post";
     public final static String POSTS_PROMO_POST_COUNT = "/promo-post/count";
