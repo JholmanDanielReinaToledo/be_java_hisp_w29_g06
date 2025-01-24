@@ -14,5 +14,7 @@ public class Messages {
     public static final String USER_NOT_FOLLOWING_SELLER = "El usuario no esta siguiendo este vendedor";
     public static final String SUCCESS_UNFOLLOW = "Vendedor dejado de seguir con éxito";
     public static final String USER_WITHOUT_FOLLOWED = "El usuario no sigue a nadie";
+
+    public static final String INTERNAL_ERROR = "Ha ocurrido un error inesperado";
     public static final String NOT_FOUNDED_POST = "No se encontraron posts";
 }

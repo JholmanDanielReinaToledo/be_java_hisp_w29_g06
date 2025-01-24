@@ -44,6 +44,10 @@ public class UserRepositoryImpl implements IUserRepository {
             return userOptional;
         }
 
+        if (user.getId() == null) {
+            user.setId(this.users.size() + 1);
+        }
+
         this.users.add(user);
 
         return Optional.of(user);

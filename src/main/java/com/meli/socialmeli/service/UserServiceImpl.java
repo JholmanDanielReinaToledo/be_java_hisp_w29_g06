@@ -1,10 +1,13 @@
 package com.meli.socialmeli.service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
 import com.meli.socialmeli.constants.Messages;
+import com.meli.socialmeli.dto.UserDto;
+import com.meli.socialmeli.exception.BadRequestException;
 import org.springframework.stereotype.Service;
 
 import com.meli.socialmeli.dto.FollowedDto;
@@ -93,4 +96,16 @@ public class UserServiceImpl implements IUserService {
         return new FollowedListResponseDto(user.get().getId(), user.get().getName(), followedDtos);
     }
 
+    @Override
+    public UserDto add(UserDto userDto) {
+        Optional<User> userCreated = this.userRepository.save(
+                User.builder().name(userDto.getUser_name()).follows(new ArrayList<>()).build()
+        );
+
+        if (userCreated.isEmpty()) {
+            throw new BadRequestException(Messages.INTERNAL_ERROR);
+        }
+
+        return new UserDto(userCreated.get().getId(), userCreated.get().getName());
+    }
 }
