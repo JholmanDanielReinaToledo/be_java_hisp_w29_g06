@@ -18,18 +18,6 @@ public class PostRepositoryImpl implements IPostRepository {
 
     public PostRepositoryImpl() {
         posts = new ArrayList<>();
-        posts.addAll(List.of(
-                new Post(
-                        1,
-                        LocalDate.now(),
-                        12000.0,
-                        new Product(1, "Consola", "Gaming", "Asus", "Negra", "Consola negra para venta"),
-                        new Seller(3, "Pepito", List.of()),
-                        0.25,
-                        true,
-                        100
-                )
-        ));
     }
 
     @Override
@@ -74,6 +62,27 @@ public class PostRepositoryImpl implements IPostRepository {
     public List<Post> getPostsInSaleBySellerId(Integer sellerId) {
         return this.posts.stream().filter(
                 p -> p.getSeller().getId().equals(sellerId) && p.getHasPromo()
+        ).toList();
+    }
+
+    @Override
+    public List<Post> getPostsByPrice(Double minPrice, Double maxPrice) {
+        return this.posts.stream().filter(
+                p -> p.getPrice() >= minPrice && p.getPrice() <= maxPrice
+        ).toList();
+    }
+
+    @Override
+    public List<Post> getPostsByMinPrice(Double minPrice) {
+        return this.posts.stream().filter(
+                p -> p.getPrice() >= minPrice
+        ).toList();
+    }
+
+    @Override
+    public List<Post> getPostsByMaxPrice(Double maxPrice) {
+        return this.posts.stream().filter(
+                p -> p.getPrice() <= maxPrice
         ).toList();
     }
 }

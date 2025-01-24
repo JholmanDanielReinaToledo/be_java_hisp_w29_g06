@@ -38,14 +38,19 @@ public class SellerRepositoryImpl implements ISellerRepository{
     }
 
     @Override
+    public int countSellers() {
+        return this.sellers.size();
+    }
+
+    @Override
     public Optional<Seller> save(Seller seller) {
         Optional<Seller> sellerOptional = this.getById(seller.getId());
         if (sellerOptional.isPresent()) {
             return sellerOptional;
         }
-
         this.sellers.add(seller);
-
         return Optional.of(seller);
     }
+
+
 }

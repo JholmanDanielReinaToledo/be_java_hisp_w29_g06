@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import com.meli.socialmeli.constants.Messages;
 import com.meli.socialmeli.constants.PostOrder;
@@ -168,6 +167,40 @@ public class PostServiceImpl implements IPostService {
 
     }
 
+    private List<PostDto> getPostDtoList(List<Post> posts) {
+        return posts.stream().map(post -> PostDto.builder()
+                .userId(post.getSeller().getId())
+                .date(post.getDate())
+                .price(post.getPrice())
+                .hasPromo(post.getHasPromo())
+                .discount(post.getDiscount())
+                .category(post.getCategory())
+                .product(ProductDto.builder()
+                        .productId(post.getProduct().getId())
+                        .productName(post.getProduct().getName())
+                        .type(post.getProduct().getType())
+                        .brand(post.getProduct().getBrand())
+                        .color(post.getProduct().getColor())
+                        .notes(post.getProduct().getNotes())
+                        .build())
+                .build())
+                .toList();
+    }
+
+    @Override
+    public List<PostDto> filterPostsByPrice(Double minPrice, Double maxPrice) {
+        List<Post> postsByPrice = minPrice != null && maxPrice != null
+                ? postRepository.getPostsByPrice(minPrice, maxPrice)
+                : minPrice != null
+                ? postRepository.getPostsByMinPrice(minPrice)
+                : postRepository.getPostsByMaxPrice(maxPrice);
+
+        if(postsByPrice.isEmpty())
+            throw new NotFoundException(Messages.NOT_FOUNDED_POST);
+
+        return getPostDtoList(postsByPrice);
+    }
+
     @Override
     public NumberOfProductsInSaleDto getNumberOfProductsInSaleBySellerId(Integer userId) {
         
@@ -188,23 +221,7 @@ public class PostServiceImpl implements IPostService {
 
         List<Post> postsInSale = this.postRepository.getPostsInSaleBySellerId(seller.get().getId());
 
-        List<PostDto> postsInSaleDto = postsInSale.stream().map(p -> PostDto.builder()
-        .userId(p.getSeller().getId())
-        .date(p.getDate())
-        .price(p.getPrice())
-        .hasPromo(p.getHasPromo())
-        .discount(p.getDiscount())
-        .category(p.getCategory())
-        .product(ProductDto.builder()
-                .productId(p.getProduct().getId())
-                .productName(p.getProduct().getName())
-                .type(p.getProduct().getType())
-                .brand(p.getProduct().getBrand())
-                .color(p.getProduct().getColor())
-                .notes(p.getProduct().getNotes())
-                .build()
-        )
-        .build()).toList();
+        List<PostDto> postsInSaleDto = getPostDtoList(postsInSale);
 
         return new ProductsOfSellerDto(
                 seller.get().getId(),
