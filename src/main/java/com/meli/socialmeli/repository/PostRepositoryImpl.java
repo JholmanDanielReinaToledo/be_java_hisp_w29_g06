@@ -33,7 +33,7 @@ public class PostRepositoryImpl implements IPostRepository {
     }
 
     @Override
-    public Optional<Post> findById(Integer id) {
+    public Optional<Post> getById(Integer id) {
         return posts.stream().filter(post1 -> post1.getId() == id).findFirst();
     }
 
@@ -47,8 +47,8 @@ public class PostRepositoryImpl implements IPostRepository {
     }
 
     @Override
-    public Optional<Post> add(Post post) {
-        Optional<Post> postExist = this.findById(post.getId());
+    public Optional<Post> save(Post post) {
+        Optional<Post> postExist = this.getById(post.getId());
 
         if (postExist.isPresent()) {
             return Optional.empty();
@@ -60,7 +60,7 @@ public class PostRepositoryImpl implements IPostRepository {
         return Optional.of(post);
     }
 
-    public Long getNumberOfProductsInSale(Integer user_id) {
+    public Long getCountPostInSaleBySellerId(Integer user_id) {
         return posts.stream()
                     .filter(post -> (post.getSeller()
                                         .getId()
@@ -71,9 +71,9 @@ public class PostRepositoryImpl implements IPostRepository {
     }
 
     @Override
-    public List<Post> findPostsInSaleByUserId(Integer userId) {
+    public List<Post> getPostsInSaleBySellerId(Integer sellerId) {
         return this.posts.stream().filter(
-                p -> p.getSeller().getId().equals(userId) && p.getHasPromo()
+                p -> p.getSeller().getId().equals(sellerId) && p.getHasPromo()
         ).toList();
     }
 }

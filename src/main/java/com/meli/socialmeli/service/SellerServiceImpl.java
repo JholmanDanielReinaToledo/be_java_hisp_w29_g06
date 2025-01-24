@@ -1,6 +1,5 @@
 package com.meli.socialmeli.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meli.socialmeli.dto.FollowersDto;
 import com.meli.socialmeli.dto.SellerDto;
 import com.meli.socialmeli.dto.UserDto;
@@ -25,8 +24,8 @@ public class SellerServiceImpl implements ISellerService{
     }
 
     @Override
-    public FollowersDto findFollowersBySeller(Integer sellerId, String order){
-        Optional<Seller> seller = sellerRepository.findById(sellerId);
+    public FollowersDto getFollowersBySellerId(Integer sellerId, String order){
+        Optional<Seller> seller = sellerRepository.getById(sellerId);
         if (seller.isEmpty()) {
             throw new NotFoundException("El vendedor con el id " + sellerId + " no existe.");
         }
@@ -58,7 +57,7 @@ public class SellerServiceImpl implements ISellerService{
 
     @Override
     public SellerDto countFollowers(Integer id) {
-        Optional<Seller> optionalSeller = sellerRepository.findById(id);
+        Optional<Seller> optionalSeller = sellerRepository.getById(id);
         if (optionalSeller.isPresent()) {
             Seller seller = optionalSeller.get();
             Integer followersCount = seller.getFollowers().size();

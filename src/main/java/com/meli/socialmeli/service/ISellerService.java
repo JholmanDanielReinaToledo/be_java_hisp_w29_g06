@@ -4,7 +4,6 @@ import com.meli.socialmeli.dto.FollowersDto;
 import com.meli.socialmeli.dto.SellerDto;
 
 public interface ISellerService {
-
-    FollowersDto findFollowersBySeller(Integer sellerId, String order);
+    FollowersDto getFollowersBySellerId(Integer sellerId, String order);
     SellerDto countFollowers(Integer id);
 }

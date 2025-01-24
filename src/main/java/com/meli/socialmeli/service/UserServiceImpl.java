@@ -7,19 +7,15 @@ import org.springframework.stereotype.Service;
 
 import com.meli.socialmeli.dto.FollowedDto;
 import com.meli.socialmeli.dto.FollowedListResponseDto;
-import com.meli.socialmeli.dto.ResponseDto;
+import com.meli.socialmeli.dto.response.ResponseDto;
 import com.meli.socialmeli.entity.Seller;
 import com.meli.socialmeli.entity.User;
 import com.meli.socialmeli.exception.ConflictException;
 import com.meli.socialmeli.exception.NotFoundException;
 import com.meli.socialmeli.repository.ISellerRepository;
 import com.meli.socialmeli.repository.IUserRepository;
-import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements IUserService {
@@ -37,11 +33,11 @@ public class UserServiceImpl implements IUserService {
         if (userId.equals(sellerId)) {
             throw new ConflictException("No puedes seguirte a ti mismo");
         }
-        Optional<User> user = userRepository.findById(userId);
+        Optional<User> user = userRepository.getById(userId);
         if (user.isEmpty()) {
             throw new NotFoundException("El usuario con ese Id no existe");
         }
-        Optional<Seller> seller = sellerRepository.findById(sellerId);
+        Optional<Seller> seller = sellerRepository.getById(sellerId);
         if (seller.isEmpty()) {
             throw new NotFoundException("El vendedor con ese Id no existe");
         }
@@ -55,18 +51,18 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public ResponseDto unfollowSeller(Integer userId, Integer sellerId) {
-        Optional<User> user = userRepository.findById(userId);
+        Optional<User> user = userRepository.getById(userId);
         if (user.isEmpty()) {
             throw new NotFoundException("El usuario con ese Id no existe");
         }
-        Optional<Seller> seller = sellerRepository.findById(sellerId);
+        Optional<Seller> seller = sellerRepository.getById(sellerId);
         if (seller.isEmpty()) {
             throw new NotFoundException("El vendedor con ese Id no existe");
         }
         if (this.sellerRepository.isFollower(seller.get(), user.get())) {
             this.userRepository.unfollowSeller(user.get(), seller.get());
             this.sellerRepository.removeFollower(seller.get(), user.get());
-        }else{
+        } else {
             throw new NotFoundException("El usuario no esta siguiendo este vendedor");
         }
 
@@ -75,19 +71,27 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public FollowedListResponseDto getFollowedList(Integer userId, String order) {
-        Optional<User> user = userRepository.findById(userId);
+        Optional<User> user = userRepository.getById(userId);
         if (user.isEmpty()) {
             throw new NotFoundException("El usuario con ese Id no existe");
         }
+
         List<Seller> sellers = user.get().getFollows();
 
-        if ("name_desc".equals(order)) {
-            sellers.sort(Comparator.comparing(Seller::getName).reversed());
-        } else {
-            sellers.sort(Comparator.comparing(Seller::getName));
+        if (sellers.isEmpty()) {
+            throw new NotFoundException("No sigue vendedores");
         }
+
+        if (order != null) {
+            if ("name_desc".equals(order)) {
+                sellers.sort(Comparator.comparing(Seller::getName).reversed());
+            } else {
+                sellers.sort(Comparator.comparing(Seller::getName));
+            }
+        }
+
         List<FollowedDto> followedDtos = sellers.stream().map(seller -> new FollowedDto(seller.getId(),seller.getName())).toList();
-        return new FollowedListResponseDto(user.get().getId(),user.get().getName(),followedDtos);
+        return new FollowedListResponseDto(user.get().getId(), user.get().getName(), followedDtos);
     }
 
 }

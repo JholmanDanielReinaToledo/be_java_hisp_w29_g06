@@ -5,6 +5,6 @@ import com.meli.socialmeli.entity.Product;
 import java.util.Optional;
 
 public interface IProductRepository {
-    Optional<Product> findById(Integer id);
-    Optional<Product> add(Product product);
+    Optional<Product> getById(Integer id);
+    Optional<Product> save(Product product);
 }

@@ -11,9 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 import com.meli.socialmeli.service.IUserService;
 
-import com.meli.socialmeli.dto.ResponseDto;
+import com.meli.socialmeli.dto.response.ResponseDto;
 import com.meli.socialmeli.service.ISellerService;
-import com.meli.socialmeli.service.IUserService;
 import com.meli.socialmeli.service.SellerServiceImpl;
 import com.meli.socialmeli.service.UserServiceImpl;
 
@@ -31,25 +30,30 @@ public class UserController {
 
     @PostMapping("/{userId}/follow/{sellerId}")
     public ResponseEntity<ResponseDto> followSeller(@PathVariable Integer userId, @PathVariable Integer sellerId ) {
-        ResponseDto response = this.userService.followSeller(userId, sellerId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(this.userService.followSeller(userId, sellerId), HttpStatus.OK);
     }
 
     @PostMapping("/{userId}/unfollow/{userIdToUnfollow}")
-    public ResponseEntity<ResponseDto> unfollowSeller(@PathVariable Integer userId, @PathVariable(name="userIdToUnfollow") Integer sellerId) {
-        ResponseDto response = this.userService.unfollowSeller(userId, sellerId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public ResponseEntity<ResponseDto> unfollowSeller(
+            @PathVariable Integer userId,
+            @PathVariable(name="userIdToUnfollow") Integer sellerId
+    ) {
+        return new ResponseEntity<>(this.userService.unfollowSeller(userId, sellerId), HttpStatus.OK);
     }
 
     @GetMapping("/{userId}/followers/list")
-    public ResponseEntity<?> listFollowersBySeller(@PathVariable(name="userId") Integer sellerId,
-                                                   @RequestParam(required=false, defaultValue = "name_asc") String order){
-        return new ResponseEntity<>(sellerService.findFollowersBySeller(sellerId, order), HttpStatus.OK);
+    public ResponseEntity<?> listFollowersBySeller(
+            @PathVariable(name="userId") Integer sellerId,
+            @RequestParam(required=false, defaultValue = "name_asc") String order
+    ) {
+        return new ResponseEntity<>(sellerService.getFollowersBySellerId(sellerId, order), HttpStatus.OK);
     }
 
     @GetMapping("{userId}/followed/list")
-    public ResponseEntity<?> listFollowed(@PathVariable Integer userId,
-                                          @RequestParam(required = false, defaultValue = "name_asc") String order) {
+    public ResponseEntity<?> listFollowed(
+            @PathVariable Integer userId,
+            @RequestParam(required = false, defaultValue = "name_asc") String order
+    ) {
         return new ResponseEntity<>(userService.getFollowedList(userId, order), HttpStatus.OK);
     }
 

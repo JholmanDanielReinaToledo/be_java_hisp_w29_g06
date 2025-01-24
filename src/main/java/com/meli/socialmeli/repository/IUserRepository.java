@@ -6,9 +6,9 @@ import com.meli.socialmeli.entity.Seller;
 import com.meli.socialmeli.entity.User;
 
 public interface IUserRepository {
-    Optional<User> findById(Integer id);
+    Optional<User> getById(Integer id);
+    Optional<User> save(User user);
     boolean followSeller(User user, Seller seller);
-    boolean save(User user);
     boolean isFollower(User user, Seller seller);
     boolean unfollowSeller(User user, Seller seller);
 }
