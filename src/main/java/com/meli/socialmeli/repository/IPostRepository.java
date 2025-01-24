@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IPostRepository {
-    Optional<Post> add(Post post);
-    Long getNumberOfProductsInSale(Integer user_id);
-    Optional<Post> findById(Integer id);
+    Optional<Post> save(Post post);
+    Long getCountPostInSaleBySellerId(Integer userId);
+    Optional<Post> getById(Integer id);
     List<Post> getPostsBySellers(List<Seller> sellers);
-    List<Post> findPostsInSaleByUserId(Integer userId);
+    List<Post> getPostsInSaleBySellerId(Integer sellerId);
 }

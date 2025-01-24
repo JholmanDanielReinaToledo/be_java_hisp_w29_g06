@@ -8,11 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.stereotype.Repository;
-
-import com.meli.socialmeli.entity.Seller;
-import com.meli.socialmeli.entity.User;
-
 @Repository
 public class UserRepositoryImpl implements IUserRepository {
 
@@ -20,18 +15,10 @@ public class UserRepositoryImpl implements IUserRepository {
 
     public UserRepositoryImpl() {
         this.users = new ArrayList<>();
-        this.users.add(
-                new User(123, "Juan", new ArrayList<>())
-        );
-        users.add(new User(1, "aJohn Doe",new ArrayList<>()));
-        users.add(new User(2, "bJane Smith",new ArrayList<>()));
-        users.add(new User(3, "cJhonson",new ArrayList<>()));
-        users.add(new User(4, "dJulian",new ArrayList<>()));
     }
 
-
     @Override
-    public Optional<User> findById(Integer id) {
+    public Optional<User> getById(Integer id) {
         return this.users.stream().filter(user -> user.getId().equals(id)).findFirst();
     }
 
@@ -51,8 +38,15 @@ public class UserRepositoryImpl implements IUserRepository {
     }
 
     @Override
-    public boolean save(User user) {
-        return this.users.add(user);
+    public Optional<User> save(User user) {
+        Optional<User> userOptional = this.getById(user.getId());
+        if (userOptional.isPresent()) {
+            return userOptional;
+        }
+
+        this.users.add(user);
+
+        return Optional.of(user);
     }
 
 }

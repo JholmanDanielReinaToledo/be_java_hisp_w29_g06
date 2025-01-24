@@ -18,7 +18,7 @@ public class SellerRepositoryImpl implements ISellerRepository{
     }
 
     @Override
-    public Optional<Seller> findById(Integer id) {
+    public Optional<Seller> getById(Integer id) {
         return this.sellers.stream().filter(seller -> seller.getId().equals(id)).findFirst();
     }
 
@@ -26,17 +26,26 @@ public class SellerRepositoryImpl implements ISellerRepository{
     public boolean addFollower(Seller seller, User user) {
         return seller.getFollowers().add(user);
     }
+
     @Override
     public boolean isFollower(Seller seller, User user){
         return seller.getFollowers().contains(user);
     }
+
     @Override
     public boolean removeFollower(Seller seller, User user) {
         return seller.getFollowers().remove(user);
     }
 
     @Override
-    public boolean save(Seller seller) {
-        return this.sellers.add(seller);
+    public Optional<Seller> save(Seller seller) {
+        Optional<Seller> sellerOptional = this.getById(seller.getId());
+        if (sellerOptional.isPresent()) {
+            return sellerOptional;
+        }
+
+        this.sellers.add(seller);
+
+        return Optional.of(seller);
     }
 }

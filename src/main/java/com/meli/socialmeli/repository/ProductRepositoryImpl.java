@@ -17,13 +17,13 @@ public class ProductRepositoryImpl implements IProductRepository {
     }
 
     @Override
-    public Optional<Product> findById(Integer id) {
+    public Optional<Product> getById(Integer id) {
         return products.stream().filter(product -> product.getId().equals(id)).findFirst();
     }
 
     @Override
-    public Optional<Product> add(Product product) {
-        Optional<Product> existingProduct = findById(product.getId());
+    public Optional<Product> save(Product product) {
+        Optional<Product> existingProduct = getById(product.getId());
 
         if (existingProduct.isPresent()) {
             return Optional.empty();

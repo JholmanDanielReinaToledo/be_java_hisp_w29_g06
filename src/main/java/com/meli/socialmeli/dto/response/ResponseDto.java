@@ -3,12 +3,12 @@ package com.meli.socialmeli.dto.response;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Data
-@Getter
-@Builder
 @AllArgsConstructor
-public class ResponseWrapperDto {
-    String message;
+@NoArgsConstructor
+@Builder
+public class ResponseDto {
+    private String message;
 }

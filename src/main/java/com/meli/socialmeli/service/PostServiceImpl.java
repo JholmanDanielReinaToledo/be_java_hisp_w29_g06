@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.meli.socialmeli.dto.response.ResponseDto;
 import org.springframework.stereotype.Service;
 
 import com.meli.socialmeli.dto.NumberOfProductsInSaleDto;
@@ -12,7 +13,6 @@ import com.meli.socialmeli.dto.PostDto;
 import com.meli.socialmeli.dto.ProductDto;
 import com.meli.socialmeli.dto.response.PostFromFollowedDto;
 import com.meli.socialmeli.dto.response.ProductsOfSellerDto;
-import com.meli.socialmeli.dto.response.ResponseWrapperDto;
 import com.meli.socialmeli.entity.Post;
 import com.meli.socialmeli.entity.Product;
 import com.meli.socialmeli.entity.Seller;
@@ -46,8 +46,8 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public ResponseWrapperDto addPost(PostDto post) {
-        Optional<Seller> seller = this.sellerRepository.findById(post.getUserId());
+    public ResponseDto addPost(PostDto post) {
+        Optional<Seller> seller = this.sellerRepository.getById(post.getUserId());
 
         if (seller.isEmpty()) {
             throw new NotFoundException("No se encontro un user con el id: " + post.getUserId());
@@ -63,10 +63,10 @@ public class PostServiceImpl implements IPostService {
                 .notes(productDto.getNotes())
                 .build();
 
-        Optional<Product> productSaved = this.productRepository.add(productToSave);
+        Optional<Product> productSaved = this.productRepository.save(productToSave);
 
         if (productSaved.isEmpty()) {
-            productSaved = this.productRepository.findById(productDto.getProductId());
+            productSaved = this.productRepository.getById(productDto.getProductId());
         }
 
         Post postToSave = Post.builder()
@@ -78,19 +78,20 @@ public class PostServiceImpl implements IPostService {
                 .category(post.getCategory())
                 .build();
 
-        Optional<Post> postSaved = this.postRepository.add(postToSave);
+        Optional<Post> postSaved = this.postRepository.save(postToSave);
 
         if (postSaved.isEmpty()) {
             throw new ConflictException("Error adding post, already exist");
         }
 
-        return ResponseWrapperDto.builder().message("Success").build();
+        return ResponseDto.builder().message("Success").build();
     }
 
-    public ResponseWrapperDto createPromoPost(PostDto promoPostDto) {
-        Seller seller = sellerRepository.findById(promoPostDto.getUserId()).orElseThrow(() -> new NotFoundException("User not found"));
+    @Override
+    public ResponseDto addPromoPost(PostDto promoPostDto) {
+        Seller seller = sellerRepository.getById(promoPostDto.getUserId()).orElseThrow(() -> new NotFoundException("User not found"));
 
-        Product product = productRepository.add(
+        Product product = productRepository.save(
                 Product.builder()
                         .id(promoPostDto.getProduct().getProductId())
                         .name(promoPostDto.getProduct().getProductName())
@@ -112,16 +113,15 @@ public class PostServiceImpl implements IPostService {
                 .discount(promoPostDto.getDiscount())
                 .build();
 
-        if(postRepository.add(post).isEmpty())
+        if(postRepository.save(post).isEmpty())
             throw new ConflictException("Error adding post, already exist");
 
-        return  ResponseWrapperDto.builder().message("Success").build();
+        return  ResponseDto.builder().message("Success").build();
     }
 
     @Override
     public PostFromFollowedDto getPostsFromFollowedUsers(Integer userId, Integer order) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
-
+        User user = userRepository.getById(userId).orElseThrow(() -> new NotFoundException("User not found"));
         if (user.getFollows().isEmpty()) {
             throw new NoSellersFollowedException("User does not follow any seller.");
         }
@@ -167,24 +167,24 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public NumberOfProductsInSaleDto getNumberOfProductsInSale(Integer userId) {
+    public NumberOfProductsInSaleDto getNumberOfProductsInSaleBySellerId(Integer userId) {
         
-        if (userRepository.findById(userId).isPresent()){
-            String name = userRepository.findById(userId).get().getName();
-            Long count = postRepository.getNumberOfProductsInSale(userId);
+        if (userRepository.getById(userId).isPresent()){
+            String name = userRepository.getById(userId).get().getName();
+            Long count = postRepository.getCountPostInSaleBySellerId(userId);
             return new NumberOfProductsInSaleDto(userId,name,count);
         }
         throw new NotFoundException("User not found.");
     }
 
     @Override
-    public ProductsOfSellerDto listAllProductsInSaleOfSeller(Integer userId) {
-        Optional<Seller> seller = sellerRepository.findById(userId);
+    public ProductsOfSellerDto getAllProductsInSaleBySellerId(Integer userId) {
+        Optional<Seller> seller = sellerRepository.getById(userId);
         if (seller.isEmpty()) {
             throw new NotFoundException("User not found.");
         }
 
-        List<Post> postsInSale = this.postRepository.findPostsInSaleByUserId(userId);
+        List<Post> postsInSale = this.postRepository.getPostsInSaleBySellerId(seller.get().getId());
 
         List<PostDto> postsInSaleDto = postsInSale.stream().map(p -> {
             return PostDto.builder()

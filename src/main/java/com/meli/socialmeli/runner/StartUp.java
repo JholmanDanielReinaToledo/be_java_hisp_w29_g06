@@ -9,10 +9,10 @@ import com.meli.socialmeli.repository.IProductRepository;
 import com.meli.socialmeli.repository.ISellerRepository;
 import com.meli.socialmeli.repository.IUserRepository;
 import jakarta.annotation.PostConstruct;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -30,38 +30,49 @@ public class StartUp {
         this.productRepository = productRepository;
     }
 
-    /**@Override
-    public void run(String... args) throws Exception {
-        loadRepositories();
-    }**/
-
     @PostConstruct
     private void loadRepositories() {
         System.out.println("Loading inital data");
         // Creamos los usuarios
         List<User> users = List.of(
-                new User(1, "Pepito", List.of()),
-                new User(2, "Juanito", List.of()),
-                new User(3, "Fermino", List.of()),
-                new User(4, "Juanita", List.of())
+                new User(1, "Pepito", new ArrayList<>()),
+                new User(2, "Juanito", new ArrayList<>()),
+                new User(3, "Fermino", new ArrayList<>()),
+                new User(4, "Juanita", new ArrayList<>())
         );
 
         // Guardamos los usuarios en el repositorio
         users.forEach(user -> userRepository.save(user));
 
         // Creamos los vendedores
+        List<User> followers1 = new ArrayList<>();
+        followers1.addAll(List.of(users.get(0), users.get(1)));
+
+        List<User> followers2 = new ArrayList<>();
+        followers2.addAll(List.of(users.get(2), users.get(3)));
+
+        List<User> followers3 = new ArrayList<>();
+        followers3.addAll(List.of(users.get(1), users.get(2)));
+
         List<Seller> sellers = List.of(
-                new Seller(1, "Don German", List.of(users.get(0), users.get(1))),
-                new Seller(2, "El Paisa", List.of(users.get(1), users.get(2))),
-                new Seller(3, "Panadería de la Esquina", List.of(users.get(2), users.get(3)))
+                new Seller(1, "Don German", followers1),
+                new Seller(2, "El Paisa", followers3),
+                new Seller(3, "Panadería de la Esquina", followers2)
         );
 
         // Guardamos los vendedores en el repositorio
         sellers.forEach(seller -> sellerRepository.save(seller));
 
         // Asignamos los vendedores a los usuarios
-        users.get(0).setFollows(List.of(sellers.get(0), sellers.get(1)));
-        users.get(1).setFollows(List.of(sellers.get(2)));
+
+        List<Seller> follows1 = new ArrayList<>();
+        follows1.add(sellers.get(0));
+        follows1.add(sellers.get(1));
+        users.get(0).setFollows(follows1);
+
+        List<Seller> follows2 = new ArrayList<>();
+        follows2.add(sellers.get(2));
+        users.get(1).setFollows(follows2);
 
         // Creamos los productos
         Product product1 = Product.builder()
@@ -83,8 +94,8 @@ public class StartUp {
                 .build();
 
         // Guardamos los productos
-        productRepository.add(product1);
-        productRepository.add(product2);
+        productRepository.save(product1);
+        productRepository.save(product2);
 
         // Creamos y guardamos las publicaciones
         List<Post> posts = List.of(
@@ -200,7 +211,7 @@ public class StartUp {
         );
 
         // Guardamos las publicaciones en el repositorio
-        posts.forEach(post -> postRepository.add(post));
+        posts.forEach(post -> postRepository.save(post));
     }
 
 }
