@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping(Endpoints.BASE_SELLER)
 @RestController
 public class SellerController {
 
@@ -18,7 +17,7 @@ public class SellerController {
         this.sellerService = sellerService;
     }
 
-    @PostMapping()
+    @PostMapping(Endpoints.BASE_SELLER)
     public ResponseEntity<CreateSellerDto> postSeller(@RequestBody CreateSellerDto createSellerDto) {
         return new ResponseEntity<>(sellerService.addSeller(createSellerDto), HttpStatus.CREATED);
     }
