@@ -5,17 +5,6 @@ import com.meli.socialmeli.entity.Post;
 import java.util.Comparator;
 
 public enum PostOrder {
-    NONE(0) {
-        @Override
-        public Comparator<Post> getComparator() {
-            return (post1, post2) -> 0;
-        }
-
-        @Override
-        public int getValueFromOrder() {
-            return 0;
-        }
-    },
     ASCENDING(1) {
         @Override
         public Comparator<Post> getComparator() {
