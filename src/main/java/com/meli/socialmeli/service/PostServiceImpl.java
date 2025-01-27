@@ -208,9 +208,9 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public NumberOfProductsInSaleDto getNumberOfProductsInSaleBySellerId(Integer userId) {
-        
-        if (userRepository.getById(userId).isPresent()){
-            String name = userRepository.getById(userId).get().getName();
+        Optional<Seller> seller = sellerRepository.getById(userId);
+        if (seller.isPresent()){
+            String name = sellerRepository.getById(userId).get().getName();
             Long count = postRepository.getCountPostInSaleBySellerId(userId);
             return new NumberOfProductsInSaleDto(userId,name,count);
         }
