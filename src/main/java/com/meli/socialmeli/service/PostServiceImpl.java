@@ -1,5 +1,6 @@
 package com.meli.socialmeli.service;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -125,7 +126,7 @@ public class PostServiceImpl implements IPostService {
         return Arrays.stream(PostOrder.values())
                 .filter(order -> order.getValueFromOrder() == orderValue)
                 .findFirst()
-                .orElse(PostOrder.NONE);
+                .orElse(PostOrder.DESCENDING);
     }
 
     @Override
@@ -140,6 +141,7 @@ public class PostServiceImpl implements IPostService {
         Comparator<Post> comparator = getPostOrder(order).getComparator();
 
         List<PostDto> postDtoList = postList.stream()
+                .filter(post -> post.getDate().isAfter(LocalDate.now().minusWeeks(2)))
                 .sorted(comparator)
                 .map(post -> PostDto.builder()
                 .userId(post.getSeller().getId())
@@ -159,6 +161,9 @@ public class PostServiceImpl implements IPostService {
                 .discount(post.getDiscount())
                 .build())
                 .toList();
+
+        if(postDtoList.isEmpty())
+            throw new NotFoundException(Messages.NOT_FOUNDED_POST);
 
         return PostFromFollowedDto.builder()
                 .userId(user.getId())

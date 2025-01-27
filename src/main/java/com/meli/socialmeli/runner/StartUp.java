@@ -93,6 +93,69 @@ public class StartUp {
                 .notes("Notes this is a desk white")
                 .build();
 
+        Product product3 = Product.builder()
+                .id(3)
+                .name("Silla")
+                .type("Oficina")
+                .brand("ComfyChair")
+                .color("Gris")
+                .notes("Silla ergonómica para oficina")
+                .build();
+
+        Product product4 = Product.builder()
+                .id(4)
+                .name("Laptop")
+                .type("Computadora")
+                .brand("TechPro")
+                .color("Plateado")
+                .notes("Laptop de alto rendimiento")
+                .build();
+
+        Product product5 = Product.builder()
+                .id(5)
+                .name("Audífonos")
+                .type("Accesorios")
+                .brand("SoundMax")
+                .color("Negro")
+                .notes("Audífonos inalámbricos con cancelación de ruido")
+                .build();
+
+        Product product6 = Product.builder()
+                .id(6)
+                .name("Smartwatch")
+                .type("Wearables")
+                .brand("FitTech")
+                .color("Azul")
+                .notes("Smartwatch con monitor de actividad física")
+                .build();
+
+        Product product7 = Product.builder()
+                .id(7)
+                .name("Altavoz")
+                .type("Audio")
+                .brand("SoundBlast")
+                .color("Rojo")
+                .notes("Altavoz portátil con Bluetooth")
+                .build();
+
+        Product product8 = Product.builder()
+                .id(8)
+                .name("Tableta")
+                .type("Computadora")
+                .brand("TableTech")
+                .color("Dorado")
+                .notes("Tableta de alta resolución con lápiz óptico")
+                .build();
+
+        Product product9 = Product.builder()
+                .id(9)
+                .name("Cámara")
+                .type("Fotografía")
+                .brand("PixelPro")
+                .color("Negro")
+                .notes("Cámara digital de alta gama")
+                .build();
+
         // Guardamos los productos
         productRepository.save(product1);
         productRepository.save(product2);
@@ -204,6 +267,116 @@ public class StartUp {
                         .price(750.0)
                         .product(product1)
                         .seller(sellers.get(2))
+                        .discount(0.1)
+                        .hasPromo(true)
+                        .category(100)
+                        .build(),
+
+                Post.builder()
+                        .id(11)
+                        .date(LocalDate.of(2025, 1, 27))
+                        .price(1000.0)
+                        .product(product1)
+                        .seller(sellers.get(0))
+                        .discount(0.1)
+                        .hasPromo(true)
+                        .category(100)
+                        .build(),
+
+                Post.builder()
+                        .id(12)
+                        .date(LocalDate.of(2025, 1, 20))
+                        .price(200.0)
+                        .product(product2)
+                        .seller(sellers.get(1))
+                        .discount(0.0)
+                        .hasPromo(false)
+                        .category(200)
+                        .build(),
+
+                Post.builder()
+                        .id(13)
+                        .date(LocalDate.of(2025, 1, 10))
+                        .price(300.0)
+                        .product(product3)
+                        .seller(sellers.get(0))
+                        .discount(0.2)
+                        .hasPromo(true)
+                        .category(300)
+                        .build(),
+
+                Post.builder()
+                        .id(14)
+                        .date(LocalDate.of(2025, 1, 25))
+                        .price(150.0)
+                        .product(product4)
+                        .seller(sellers.get(1))
+                        .discount(0.0)
+                        .hasPromo(false)
+                        .category(400)
+                        .build(),
+
+                Post.builder()
+                        .id(15)
+                        .date(LocalDate.of(2025, 1, 15))
+                        .price(400.0)
+                        .product(product5)
+                        .seller(sellers.get(0))
+                        .discount(0.15)
+                        .hasPromo(true)
+                        .category(500)
+                        .build(),
+
+                Post.builder()
+                        .id(16)
+                        .date(LocalDate.of(2025, 1, 5))
+                        .price(500.0)
+                        .product(product6)
+                        .seller(sellers.get(1))
+                        .discount(0.1)
+                        .hasPromo(true)
+                        .category(600)
+                        .build(),
+
+                Post.builder()
+                        .id(17)
+                        .date(LocalDate.of(2025, 1, 22))
+                        .price(130.0)
+                        .product(product7)
+                        .seller(sellers.get(0))
+                        .discount(0.05)
+                        .hasPromo(false)
+                        .category(700)
+                        .build(),
+
+                Post.builder()
+                        .id(18)
+                        .date(LocalDate.of(2025, 1, 18))
+                        .price(600.0)
+                        .product(product8)
+                        .seller(sellers.get(1))
+                        .discount(0.2)
+                        .hasPromo(true)
+                        .category(800)
+                        .build(),
+
+                Post.builder()
+                        .id(19)
+                        .date(LocalDate.of(2025, 1, 12))
+                        .price(250.0)
+                        .product(product9)
+                        .seller(sellers.get(0))
+                        .discount(0.0)
+                        .hasPromo(false)
+                        .category(900)
+                        .build(),
+
+                Post.builder()
+                        .id(20)
+                        .date(LocalDate.of(2025, 1, 24))
+                        .price(750.0)
+                        .product(product1)
+                        .seller(sellers.get(1))
                         .discount(0.1)
                         .hasPromo(true)
                         .category(100)
