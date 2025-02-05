@@ -1,4 +1,185 @@
 package com.meli.socialmeli.service;
 
+import com.meli.socialmeli.dto.response.PostFromFollowedDto;
+import com.meli.socialmeli.entity.Post;
+import com.meli.socialmeli.entity.Product;
+import com.meli.socialmeli.entity.Seller;
+import com.meli.socialmeli.entity.User;
+import com.meli.socialmeli.exception.NoSellersFollowedException;
+import com.meli.socialmeli.exception.NotFoundException;
+import com.meli.socialmeli.repository.IPostRepository;
+import com.meli.socialmeli.repository.IUserRepository;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
 public class PostServiceTest {
+    private static final int USER_ID = 1;
+    private static final int ORDER = 0;
+    private static final LocalDate CURRENT_DATE = LocalDate.now();
+
+    @Mock
+    private IPostRepository postRepository;
+
+    @Mock
+    private IUserRepository userRepository;
+
+    @InjectMocks
+    private PostServiceImpl postService;
+
+    private List<Seller> sellers;
+    private List<Product> products;
+    private List<Post> posts;
+    private User testUser;
+
+    @BeforeEach
+    void setUp() {
+        sellers = createSellers();
+        products = createProducts();
+        posts = createPosts();
+        testUser = createTestUser();
+    }
+
+    @Test
+    @DisplayName("T-0008: Should filter posts by last two weeks")
+    void getPostsFromFollowedUsersOk() {
+        // Arrange
+        when(userRepository.getById(USER_ID)).thenReturn(Optional.of(testUser));
+        when(postRepository.getPostsBySellers(sellers)).thenReturn(posts);
+
+        // Act
+        PostFromFollowedDto result = postService.getPostsFromFollowedUsers(USER_ID, ORDER);
+
+        // Assert
+        result.getPosts().forEach(post ->
+                Assertions.assertTrue(post.getDate().isAfter(CURRENT_DATE.minusWeeks(2)),
+                        "Post date should be within last two weeks")
+        );
+    }
+
+    @Test
+    @DisplayName("T-0008: Not found posts")
+    void getPostsFromFollowedUsersExceptionPostsNotFound() {
+        // Arrange
+        when(userRepository.getById(USER_ID)).thenReturn(Optional.of(testUser));
+        when(postRepository.getPostsBySellers(sellers)).thenReturn(Arrays.asList());
+
+        // Act && Assert NotFoundException
+        Assertions.assertThrows(NotFoundException.class, () -> postService.getPostsFromFollowedUsers(USER_ID, ORDER));
+
+    }
+
+    @Test
+    @DisplayName("T-0008: Not found user")
+    void getPostsFromFollowedUsersExceptionUserNotFound() {
+        // Arrange
+        when(userRepository.getById(USER_ID)).thenReturn(Optional.empty());
+
+        // Act && Assert NotFoundException
+        Assertions.assertThrows(NotFoundException.class, () -> postService.getPostsFromFollowedUsers(USER_ID, ORDER));
+    }
+
+    @Test
+    @DisplayName("T-0008: Not found sellers")
+    void getPostsFromFollowedUsersExceptionSellersNotFound() {
+        // Arrange
+        User testUser = User.builder()
+                .id(USER_ID)
+                .name("User")
+                .follows(Arrays.asList())
+                .build();
+        when(userRepository.getById(USER_ID)).thenReturn(Optional.of(testUser));
+
+        // Act && Assert NotFoundException
+        Assertions.assertThrows(NoSellersFollowedException.class, () -> postService.getPostsFromFollowedUsers(USER_ID, ORDER));
+    }
+
+
+
+
+    private List<Seller> createSellers() {
+        Seller seller1 = Seller.builder()
+                .id(1)
+                .name("Seller 1")
+                .build();
+
+        Seller seller2 = Seller.builder()
+                .id(2)
+                .name("Seller 2")
+                .build();
+
+        return Arrays.asList(seller1, seller2);
+    }
+
+    private List<Product> createProducts() {
+        Product product1 = Product.builder()
+                .id(1)
+                .name("Juego")
+                .type("Gamer")
+                .brand("Box")
+                .color("Black")
+                .notes("Notes this is a game for box")
+                .build();
+
+        Product product2 = Product.builder()
+                .id(2)
+                .name("Mesa")
+                .type("Gamer")
+                .brand("Desk")
+                .color("White")
+                .notes("Notes this is a desk white")
+                .build();
+
+        return Arrays.asList(product1, product2);
+    }
+
+    private List<Post> createPosts() {
+        Post post1 = createPost(11, CURRENT_DATE.minusWeeks(1), 1000.0,
+                products.get(0), sellers.get(0), 0.1, true, 100);
+
+        Post post2 = createPost(12, CURRENT_DATE.minusDays(13), 200.0,
+                products.get(1), sellers.get(1), 0.0, false, 200);
+
+        Post post3 = createPost(13, CURRENT_DATE.minusWeeks(3), 200.0,
+                products.get(1), sellers.get(1), 0.0, false, 200);
+
+        return Arrays.asList(post1, post2, post3);
+    }
+
+    private Post createPost(int id, LocalDate date, double price, Product product,
+                            Seller seller, double discount, boolean hasPromo, int category) {
+        return Post.builder()
+                .id(id)
+                .date(date)
+                .price(price)
+                .product(product)
+                .seller(seller)
+                .discount(discount)
+                .hasPromo(hasPromo)
+                .category(category)
+                .build();
+    }
+
+    private User createTestUser() {
+        return User.builder()
+                .id(USER_ID)
+                .name("User")
+                .follows(sellers)
+                .build();
+    }
+
+
 }
