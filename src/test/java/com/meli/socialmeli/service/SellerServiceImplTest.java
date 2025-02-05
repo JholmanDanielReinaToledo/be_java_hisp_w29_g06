@@ -45,7 +45,7 @@ class SellerServiceImplTest {
 
     @Test
     @DisplayName("T-0003: Should successfully get followers with valid order parameters")
-    void getFollowersBySellerId_WithValidOrders_ShouldSucceed() {
+    void getFollowersBySellerIdOk() {
         // Arrange
         List<String> validOrders = Arrays.asList("name_asc", "name_desc");
 
@@ -57,7 +57,7 @@ class SellerServiceImplTest {
 
     @Test
     @DisplayName("T-0003: Should throw exception with invalid order parameters")
-    void getFollowersBySellerId_WithInvalidOrders_ShouldThrowException() {
+    void getFollowersBySellerIdException() {
         // Arrange
         List<String> invalidOrders = Arrays.asList("invalid_order", "name_non", " ");
 
