@@ -1,9 +1,11 @@
 package com.meli.socialmeli.service;
 
+import com.meli.socialmeli.constants.Messages;
 import com.meli.socialmeli.dto.FollowedDto;
 import com.meli.socialmeli.dto.FollowedListResponseDto;
 import com.meli.socialmeli.entity.Seller;
 import com.meli.socialmeli.entity.User;
+import com.meli.socialmeli.exception.NotFoundOrderException;
 import com.meli.socialmeli.repository.IUserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 public class UserServiceTest {
@@ -47,7 +50,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void testOrderAscendente() {
+    void testOrderNull() {
         FollowedListResponseDto response = userService.getFollowedList(1, null );
         List<FollowedDto> followed = response.getFollowed();
 
@@ -64,5 +67,21 @@ public class UserServiceTest {
         assertEquals("Carlos", followed.get(0).getUser_name());
         assertEquals("Beatriz", followed.get(1).getUser_name());
         assertEquals("Ana", followed.get(2).getUser_name());
+    }
+
+    @Test
+    void testOrderAscendente() {
+        FollowedListResponseDto response = userService.getFollowedList(1, "name_asc" );
+        List<FollowedDto> followed = response.getFollowed();
+
+        assertEquals("Ana", followed.get(0).getUser_name());
+        assertEquals("Beatriz", followed.get(1).getUser_name());
+        assertEquals("Carlos", followed.get(2).getUser_name());
+    }
+
+    @Test
+    void testOrderInvalido() {
+        assertThrows(NotFoundOrderException.class, () ->
+                userService.getFollowedList(1, "El orden no es válido"), Messages.ORDER_NOT_FOUND);
     }
 }
