@@ -2,6 +2,7 @@ package com.meli.socialmeli.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.meli.socialmeli.constants.ValidationValues;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
@@ -21,12 +22,12 @@ public class PostDto {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Integer id;
 
-    @NotNull(message = "El  id no puede estar vacío")
-    @Positive(message = "El id debe ser mayor a cero")
+    @NotNull(message = ValidationValues.ID_CANT_BE_EMPTY)
+    @Positive(message = ValidationValues.ID_POSITIVE_NUMBER)
     @JsonProperty("user_id")
     private Integer userId;
 
-    @NotNull(message = "La fecha no puede estar vacía")
+    @NotNull(message = ValidationValues.DATE_CANT_BE_EMPTY)
     private LocalDate date;
 
     @NotNull
@@ -35,8 +36,8 @@ public class PostDto {
 
     private Integer category;
 
-    @Max(value = 10000000, message = "El precio máximo por producto es de 10.000.000")
-    @NotNull(message = "El campo no puede estar vacío.")
+    @Max(value = ValidationValues.PRODUCT_MAX_VALUE, message = ValidationValues.PRODUCT_MAX_VALUE_STRING)
+    @NotNull(message = ValidationValues.FIELD_CANT_BE_EMPTY)
     @Positive
     private Double price;
 
