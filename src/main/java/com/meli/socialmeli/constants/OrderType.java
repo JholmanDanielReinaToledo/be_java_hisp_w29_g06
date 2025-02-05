@@ -1,6 +1,7 @@
 package com.meli.socialmeli.constants;
 
 public enum OrderType {
+    NOT_FOUND(0),
     ASCENDING(1),
     DESCENDING(2);
 
@@ -21,7 +22,9 @@ public enum OrderType {
         return switch (str) {
             case "date_asc" -> ASCENDING;
             case "date_desc" -> DESCENDING;
-            default -> DESCENDING;
+            case "name_asc" -> ASCENDING;
+            case "name_desc" -> DESCENDING;
+            default -> NOT_FOUND;
         };
     }
 }
