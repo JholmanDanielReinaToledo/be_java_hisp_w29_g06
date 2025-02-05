@@ -147,30 +147,16 @@ public class PostServiceTest {
     }
 
     private List<Post> createPosts() {
-        Post post1 = createPost(11, CURRENT_DATE.minusWeeks(1), 1000.0,
+        Post post1 = new Post(11, CURRENT_DATE.minusWeeks(1), 1000.0,
                 products.get(0), sellers.get(0), 0.1, true, 100);
 
-        Post post2 = createPost(12, CURRENT_DATE.minusDays(13), 200.0,
+        Post post2 = new Post(12, CURRENT_DATE.minusDays(13), 200.0,
                 products.get(1), sellers.get(1), 0.0, false, 200);
 
-        Post post3 = createPost(13, CURRENT_DATE.minusWeeks(3), 200.0,
+        Post post3 = new Post(13, CURRENT_DATE.minusWeeks(3), 200.0,
                 products.get(1), sellers.get(1), 0.0, false, 200);
 
         return Arrays.asList(post1, post2, post3);
-    }
-
-    private Post createPost(int id, LocalDate date, double price, Product product,
-                            Seller seller, double discount, boolean hasPromo, int category) {
-        return Post.builder()
-                .id(id)
-                .date(date)
-                .price(price)
-                .product(product)
-                .seller(seller)
-                .discount(discount)
-                .hasPromo(hasPromo)
-                .category(category)
-                .build();
     }
 
     private User createTestUser() {
