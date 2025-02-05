@@ -1,6 +1,7 @@
 package com.meli.socialmeli.service;
 
 import com.meli.socialmeli.constants.Messages;
+import com.meli.socialmeli.constants.OrderType;
 import com.meli.socialmeli.dto.CreateSellerDto;
 import com.meli.socialmeli.dto.FollowersDto;
 import com.meli.socialmeli.dto.SellerDto;
@@ -9,6 +10,7 @@ import com.meli.socialmeli.dto.response.ResponseDto;
 import com.meli.socialmeli.entity.Seller;
 import com.meli.socialmeli.entity.User;
 import com.meli.socialmeli.exception.NotFoundException;
+import com.meli.socialmeli.exception.NotFoundOrderException;
 import com.meli.socialmeli.repository.ISellerRepository;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +32,12 @@ public class SellerServiceImpl implements ISellerService{
     @Override
     public FollowersDto getFollowersBySellerId(Integer sellerId, String order){
         Optional<Seller> seller = sellerRepository.getById(sellerId);
+        OrderType orderType = OrderType.fromString(order);
+
+        if (orderType == OrderType.NOT_FOUND) {
+            throw new NotFoundOrderException(Messages.ORDER_NOT_FOUND);
+        }
+
         if (seller.isEmpty()) {
             throw new NotFoundException(Messages.SELLER_NOT_FOUND.replace("%s", sellerId.toString()));
         }
@@ -40,7 +48,7 @@ public class SellerServiceImpl implements ISellerService{
             throw new NotFoundException(Messages.NO_FOLLOWERS_ASSOCIATED);
         }
 
-        if ("name_desc".equals(order)) {
+        if (orderType == OrderType.DESCENDING) {
             listUser.sort(Comparator.comparing(User::getName).reversed());
         } else {
             listUser.sort(Comparator.comparing(User::getName));

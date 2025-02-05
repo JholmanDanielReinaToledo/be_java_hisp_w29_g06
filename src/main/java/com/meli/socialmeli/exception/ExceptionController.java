@@ -58,4 +58,10 @@ public class ExceptionController {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(NotFoundOrderException.class)
+    public ResponseEntity<ExceptionDto> notFoundOrder(NotFoundOrderException e){
+        ExceptionDto exceptionDto = new ExceptionDto(e.getMessage());
+        return new ResponseEntity<>(exceptionDto, HttpStatus.NOT_FOUND);
+    }
+
 }
