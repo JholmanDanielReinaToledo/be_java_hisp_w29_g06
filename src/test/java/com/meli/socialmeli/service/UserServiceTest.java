@@ -36,8 +36,8 @@ public class UserServiceTest {
     private final Integer sellerId = 1;
 
     @Test
-    @DisplayName("US-0007 - Dejar de seguir un vendedor exitosamente")
-    void testUnfollowSeller_Success() {
+    @DisplayName("TEST-002 - Dejar de seguir un vendedor exitosamente")
+    void testUnfollowSellerOk() {
         // Arrange
         User mockUser = new User();
         Seller mockSeller = new Seller();
@@ -67,6 +67,29 @@ public class UserServiceTest {
         assertThrows(NotFoundException.class, () -> userService.unfollowSeller(userId, sellerId));
     }
 
+    @Test
+    @DisplayName("TEST-002: Verificar que al dejar de seguir a un vendedor si el usuario no existe, se lanza una excepción")
+    void testUnfollowSeller_UserNotFound() {
+        // Arrange
+        when(userRepository.getById(userId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(NotFoundException.class, () -> userService.unfollowSeller(userId, sellerId));
+    }
+
+    @Test
+    @DisplayName("TEST-002: Verificar que al dejar de seguir a un vendedor si el usuario no lo sigue, se lanza una excepción")
+    void testUnfollowSeller_UserNotFollowingSeller() {
+        // Arrange
+        User mockUser = new User();
+        Seller mockSeller = new Seller();
+        when(userRepository.getById(userId)).thenReturn(Optional.of(mockUser));
+        when(sellerRepository.getById(sellerId)).thenReturn(Optional.of(mockSeller));
+        when(sellerRepository.isFollower(mockSeller, mockUser)).thenReturn(false);
+
+        // Act & Assert
+        assertThrows(NotFoundException.class, () -> userService.unfollowSeller(userId, sellerId));
+    }
 
 
 
