@@ -64,7 +64,7 @@ public class UserServiceTest {
         when(sellerRepository.getById(sellerId)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(NotFoundException.class, () -> userService.unfollowSeller(userId, sellerIdToUnfollow));
+        assertThrows(NotFoundException.class, () -> userService.unfollowSeller(userId, sellerId));
     }
 
 
