@@ -4,8 +4,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
+import com.meli.socialmeli.dto.FollowedDto;
+import com.meli.socialmeli.dto.FollowedListResponseDto;
+import com.meli.socialmeli.exception.NotFoundOrderException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -46,6 +50,8 @@ public class UserServiceTest {
     private final Integer userId = 1;
     private final Integer sellerId = 1;
 
+    private User user;
+
     @BeforeEach
     public void setUp() {
         userWithNoFollows = User.builder()
@@ -69,10 +75,24 @@ public class UserServiceTest {
                                     .build();
         userWithFollows.setFollows(Arrays.asList(sellerWithFollowers));
         sellerWithFollowers.setFollowers(Arrays.asList(userWithFollows));
+
+        // Crear vendedores
+        Seller seller1 = new Seller(1, "Carlos", List.of());
+        Seller seller2 = new Seller(2, "Ana", List.of());
+        Seller seller3 = new Seller(3, "Beatriz", List.of());
+
+        // Crear un usuario de prueba
+        user = new User();
+        user.setId(1);
+        user.setName("UsuarioTest");
+        user.setFollows(Arrays.asList(seller1, seller2, seller3));
     }
+
+
     @Test
     @DisplayName("T-0001: User follows a Seller ")
     public void followSellerOk() {
+
         // Arrange
         // Declaramos los Id que se le pasan a la función de service
         Integer userId = 1;
@@ -186,6 +206,47 @@ public class UserServiceTest {
 
         // Act & Assert
         assertThrows(NotFoundException.class, () -> userService.unfollowSeller(userId, sellerId));
+    }
+
+    @Test
+    @DisplayName("TEST-0004 - Order es igual a Null")
+    void testOrderNull() {
+        when(userRepository.getById(1)).thenReturn(Optional.of(user));
+
+        assertThrows(NotFoundOrderException.class, () ->
+                userService.getFollowedList(1, null), Messages.ORDER_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("TEST-0004 - Order es descendente")
+    void testOrderDescendente() {
+        when(userRepository.getById(1)).thenReturn(Optional.of(user));
+        FollowedListResponseDto response = userService.getFollowedList(1, "name_desc");
+        List<FollowedDto> followed = response.getFollowed();
+
+        assertEquals("Carlos", followed.get(0).getUser_name());
+        assertEquals("Beatriz", followed.get(1).getUser_name());
+        assertEquals("Ana", followed.get(2).getUser_name());
+    }
+
+    @Test
+    @DisplayName("TEST-0004 - Order es ascendente")
+    void testOrderAscendente() {
+        when(userRepository.getById(1)).thenReturn(Optional.of(user));
+        FollowedListResponseDto response = userService.getFollowedList(1, "name_asc" );
+        List<FollowedDto> followed = response.getFollowed();
+
+        assertEquals("Ana", followed.get(0).getUser_name());
+        assertEquals("Beatriz", followed.get(1).getUser_name());
+        assertEquals("Carlos", followed.get(2).getUser_name());
+    }
+
+    @Test
+    @DisplayName("TEST-0004 - Order es invalido")
+    void testOrderInvalido() {
+        when(userRepository.getById(1)).thenReturn(Optional.of(user));
+        assertThrows(NotFoundOrderException.class, () ->
+                userService.getFollowedList(1, "El orden no es válido"), Messages.ORDER_NOT_FOUND);
     }
 }
 
