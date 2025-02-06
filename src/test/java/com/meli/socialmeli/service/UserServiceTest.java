@@ -51,12 +51,8 @@ public class UserServiceTest {
 
     @Test
     void testOrderNull() {
-        FollowedListResponseDto response = userService.getFollowedList(1, null );
-        List<FollowedDto> followed = response.getFollowed();
-
-        assertEquals("Ana", followed.get(0).getUser_name());
-        assertEquals("Beatriz", followed.get(1).getUser_name());
-        assertEquals("Carlos", followed.get(2).getUser_name());
+        assertThrows(NotFoundOrderException.class, () ->
+                userService.getFollowedList(1, null), Messages.ORDER_NOT_FOUND);
     }
 
     @Test

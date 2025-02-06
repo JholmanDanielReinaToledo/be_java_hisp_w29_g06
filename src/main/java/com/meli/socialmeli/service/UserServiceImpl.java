@@ -87,7 +87,7 @@ public class UserServiceImpl implements IUserService {
 
         if ("name_desc".equals(order)) {
             sellers.sort(Comparator.comparing(Seller::getName).reversed());
-        } else if ("name_asc".equals(order) || order == null) {
+        } else if ("name_asc".equals(order)) {
             sellers.sort(Comparator.comparing(Seller::getName));
         } else {
             throw new NotFoundOrderException(Messages.ORDER_NOT_FOUND);
