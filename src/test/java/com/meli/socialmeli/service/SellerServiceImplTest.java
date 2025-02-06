@@ -1,5 +1,11 @@
 package com.meli.socialmeli.service;
 
+import com.meli.socialmeli.constants.Messages;
+import com.meli.socialmeli.dto.FollowedDto;
+import com.meli.socialmeli.dto.FollowedListResponseDto;
+import com.meli.socialmeli.dto.FollowersDto;
+import com.meli.socialmeli.dto.UserDto;
+import com.meli.socialmeli.dto.SellerDto;
 import com.meli.socialmeli.entity.Seller;
 import com.meli.socialmeli.entity.User;
 import com.meli.socialmeli.exception.NotFoundOrderException;
@@ -18,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -35,12 +42,41 @@ class SellerServiceImplTest {
 
     private List<User> testUsers;
     private Seller testSeller;
+    private Seller seller;
 
     @BeforeEach
     void setUp() {
         testUsers = createTestUsers();
         testSeller = createTestSeller();
         mockSellerRepository();
+
+        // Crear vendedores
+        User user1 = new User(1, "Carlos", List.of());
+        User user2 = new User(2, "Ana", List.of());
+        User user3 = new User(3, "Beatriz", List.of());
+
+        // Crear un usuario de prueba
+        seller = new Seller();
+        seller.setId(1);
+        seller.setName("SellerTest");
+        seller.setFollowers(Arrays.asList(user1, user2, user3));
+
+    }
+
+
+    @Test
+    @DisplayName("T-0002: Should successfully get followers count")
+    void countFollowersOk() {
+        //Arrange
+        when(sellerRepository.getById(SELLER_ID)).thenReturn(Optional.of(testSeller));
+
+        //Act
+        SellerDto response = sellerService.countFollowers(SELLER_ID);
+
+        //Assert
+        verify(sellerRepository).getById(SELLER_ID);
+        assertEquals(SELLER_NAME, response.getUser_name());
+        assertEquals(testSeller.getFollowers().size(), response.getFollowers_count());
     }
 
     @Test
@@ -68,6 +104,43 @@ class SellerServiceImplTest {
         );
     }
 
+    @Test
+    @DisplayName("T-0004: Order es descendente.")
+    void testOrderDescendente() {
+        // Simular el comportamiento del repositorio para devolver el vendedor
+        when(sellerRepository.getById(1)).thenReturn(Optional.of(seller));
+
+        FollowersDto response = sellerService.getFollowersBySellerId(1, "name_desc");
+        List<UserDto> followers = response.getFollowers();
+
+        assertEquals("Carlos", followers.get(0).getUser_name());
+        assertEquals("Beatriz", followers.get(1).getUser_name());
+        assertEquals("Ana", followers.get(2).getUser_name());
+    }
+
+    @Test
+    @DisplayName("T-0004: Order es ascendente.")
+    void testOrderAscendente() {
+        // Simular el comportamiento del repositorio para devolver el vendedor
+        when(sellerRepository.getById(1)).thenReturn(Optional.of(seller));
+
+        FollowersDto response = sellerService.getFollowersBySellerId(1, "name_asc" );
+        List<UserDto> followers = response.getFollowers();
+
+        assertEquals("Ana", followers.get(0).getUser_name());
+        assertEquals("Beatriz", followers.get(1).getUser_name());
+        assertEquals("Carlos", followers.get(2).getUser_name());
+    }
+
+    @Test
+    @DisplayName("T-0004: Order es invalido.")
+    void testOrderInvalido() {
+        // Simular el comportamiento del repositorio para devolver el vendedor
+        when(sellerRepository.getById(1)).thenReturn(Optional.of(seller));
+        assertThrows(NotFoundOrderException.class, () ->
+                sellerService.getFollowersBySellerId(1, "El orden no es válido"), Messages.ORDER_NOT_FOUND);
+    }
+
     private List<User> createTestUsers() {
         return Arrays.asList(
                 new User(1, "Pepito", new ArrayList<>()),
@@ -83,4 +156,5 @@ class SellerServiceImplTest {
         when(sellerRepository.getById(SELLER_ID))
                 .thenReturn(Optional.of(testSeller));
     }
+
 }
