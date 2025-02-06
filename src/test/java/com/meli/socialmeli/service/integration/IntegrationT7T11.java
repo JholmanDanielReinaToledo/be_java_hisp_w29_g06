@@ -1,7 +1,6 @@
-package com.meli.socialmeli.service;
+package com.meli.socialmeli.service.integration;
 
 import com.meli.socialmeli.constants.Messages;
-import com.meli.socialmeli.dto.NumberOfProductsInSaleDto;
 import com.meli.socialmeli.entity.Post;
 import com.meli.socialmeli.entity.Seller;
 import com.meli.socialmeli.entity.User;
@@ -10,16 +9,13 @@ import com.meli.socialmeli.repository.SellerRepositoryImpl;
 import com.meli.socialmeli.repository.UserRepositoryImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
@@ -40,9 +36,6 @@ public class IntegrationT7T11 {
     @Autowired
     private PostRepositoryImpl postRepository;
 
-    @Mock
-    private PostServiceImpl postService;
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -56,6 +49,13 @@ public class IntegrationT7T11 {
         this.userRepository.save(user);
         this.sellerRepository.save(seller);
         sellerRepository.addFollower(seller, user);
+        for (int i = 30; i < 35; i++) {
+            Post promoPost = new Post();
+            promoPost.setId(i + 1);
+            promoPost.setSeller(seller);
+            promoPost.setHasPromo(true);
+            this.postRepository.save(promoPost);
+        }
     }
 
     @Test
@@ -69,8 +69,14 @@ public class IntegrationT7T11 {
                 .andExpect(jsonPath("$.message").value(Messages.USER_NOT_FOLLOWING_SELLER));
     }
 
+    @Test
+    public void testGetNumberOfProductsInSaleSuccess() throws Exception {
 
-
-
+        mockMvc.perform(get("/products/promo-post/count?user_id=20"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.user_id").value(20))
+                .andExpect(jsonPath("$.user_name").value("Juanito"))
+                .andExpect(jsonPath("$.promo_products_count").value(5L));
+    }
 
 }
