@@ -1,5 +1,10 @@
 package com.meli.socialmeli.service;
 
+import com.meli.socialmeli.constants.Messages;
+import com.meli.socialmeli.dto.FollowedDto;
+import com.meli.socialmeli.dto.FollowedListResponseDto;
+import com.meli.socialmeli.dto.FollowersDto;
+import com.meli.socialmeli.dto.UserDto;
 import com.meli.socialmeli.entity.Seller;
 import com.meli.socialmeli.entity.User;
 import com.meli.socialmeli.exception.NotFoundOrderException;
@@ -36,16 +41,32 @@ class SellerServiceImplTest {
     private List<User> testUsers;
     private Seller testSeller;
 
-    @BeforeEach
     void setUp() {
         testUsers = createTestUsers();
         testSeller = createTestSeller();
         mockSellerRepository();
     }
 
+    public void setUpExt(){
+        // Crear vendedores
+        User user1 = new User(1, "Carlos", List.of());
+        User user2 = new User(2, "Ana", List.of());
+        User user3 = new User(3, "Beatriz", List.of());
+
+        // Crear un usuario de prueba
+        Seller seller = new Seller();
+        seller.setId(1);
+        seller.setName("SellerTest");
+        seller.setFollowers(Arrays.asList(user1, user2, user3));
+
+        // Simular el comportamiento del repositorio para devolver el usuario
+        when(sellerRepository.getById(1)).thenReturn(Optional.of(seller));
+    }
+
     @Test
     @DisplayName("T-0003: Should successfully get followers with valid order parameters")
     void getFollowersBySellerIdOk() {
+        setUp();
         // Arrange
         List<String> validOrders = Arrays.asList("name_asc", "name_desc");
 
@@ -58,6 +79,7 @@ class SellerServiceImplTest {
     @Test
     @DisplayName("T-0003: Should throw exception with invalid order parameters")
     void getFollowersBySellerIdException() {
+        setUp();
         // Arrange
         List<String> invalidOrders = Arrays.asList("invalid_order", "name_non", " ");
 
@@ -66,6 +88,37 @@ class SellerServiceImplTest {
                 assertThrows(NotFoundOrderException.class,
                         () -> sellerService.getFollowersBySellerId(SELLER_ID, order))
         );
+    }
+
+    @Test
+    void testOrderDescendente() {
+        setUpExt();
+
+        FollowersDto response = sellerService.getFollowersBySellerId(1, "name_desc");
+        List<UserDto> followers = response.getFollowers();
+
+        assertEquals("Carlos", followers.get(0).getUser_name());
+        assertEquals("Beatriz", followers.get(1).getUser_name());
+        assertEquals("Ana", followers.get(2).getUser_name());
+    }
+
+    @Test
+    void testOrderAscendente() {
+        setUpExt();
+
+        FollowersDto response = sellerService.getFollowersBySellerId(1, "name_asc" );
+        List<UserDto> followers = response.getFollowers();
+
+        assertEquals("Ana", followers.get(0).getUser_name());
+        assertEquals("Beatriz", followers.get(1).getUser_name());
+        assertEquals("Carlos", followers.get(2).getUser_name());
+    }
+
+    @Test
+    void testOrderInvalido() {
+        setUpExt();
+        assertThrows(NotFoundOrderException.class, () ->
+                sellerService.getFollowersBySellerId(1, "El orden no es válido"), Messages.ORDER_NOT_FOUND);
     }
 
     private List<User> createTestUsers() {
@@ -83,4 +136,5 @@ class SellerServiceImplTest {
         when(sellerRepository.getById(SELLER_ID))
                 .thenReturn(Optional.of(testSeller));
     }
+
 }
