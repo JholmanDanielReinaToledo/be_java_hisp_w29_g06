@@ -51,11 +51,9 @@ public class PostServiceTest {
     private List<Product> products;
     private List<Post> posts;
     private User testUser;
-
-    private User user1;
+    private Post post1;
     private Seller seller1;
     private Product product1;
-    private Post post1;
 
     @BeforeEach
     void setUp() {
@@ -63,12 +61,7 @@ public class PostServiceTest {
         products = createProducts();
         posts = createPosts();
         testUser = createTestUser();
-    }
-
-    @BeforeEach
-    void setUp2() {
         seller1 = createTestSeller();
-        user1 = createTestUser(seller1);
         product1 = createTestProduct();
         post1 = createTestPost(product1, seller1);
     }
@@ -77,30 +70,27 @@ public class PostServiceTest {
     @DisplayName("Should throw NotFoundOrderException when order is not valid")
     void getPostsFromFollowedUsers_OrderNotFoundException() {
         //Arrange
-        Integer userId = 1;
-        Integer order = 0;
-        when(userRepository.getById(userId)).thenReturn(Optional.of(user1));
+        Integer order = 0; //incorrecto
+        when(userRepository.getById(USER_ID)).thenReturn(Optional.of(testUser));
 
         //Act & Assert
         assertThrows(NotFoundOrderException.class,
-                () -> postService.getPostsFromFollowedUsers(userId, order));
+                () -> postService.getPostsFromFollowedUsers(USER_ID, order));
     }
 
     @Test
     @DisplayName("Should return a list of posts from followed users")
     void getPostsFromFollowedUsers_Ok() {
         //Arrange
-        Integer userId = 1;
-        Integer order = PostOrder.ASCENDING.getValue();
-        when(userRepository.getById(userId)).thenReturn(Optional.of(user1));
-        when(postRepository.getPostsBySellers(user1.getFollows())).thenReturn(List.of(post1));
+        when(userRepository.getById(USER_ID)).thenReturn(Optional.of(testUser));
+        when(postRepository.getPostsBySellers(testUser.getFollows())).thenReturn(List.of(post1));
 
         //Act
-        PostFromFollowedDto response = postService.getPostsFromFollowedUsers(userId, order);
+        PostFromFollowedDto response = postService.getPostsFromFollowedUsers(USER_ID, ORDER);
 
         //Assert
-        verify(userRepository).getById(userId);
-        verify(postRepository).getPostsBySellers(user1.getFollows());
+        verify(userRepository).getById(USER_ID);
+        verify(postRepository).getPostsBySellers(testUser.getFollows());
         assert(response.getPosts().size() > 0); //Al menos 1 post
     }
 
@@ -158,12 +148,6 @@ public class PostServiceTest {
         Assertions.assertThrows(NoSellersFollowedException.class, () -> postService.getPostsFromFollowedUsers(USER_ID, ORDER));
     }
 
-    private User createTestUser(Seller seller) {
-        User user = new User(1, "Juan", new ArrayList<>());
-        user.getFollows().add(seller);
-        return user;
-    }
-
     private Seller createTestSeller() {
         return new Seller(1, "Juansito", new ArrayList<>());
     }
@@ -191,7 +175,6 @@ public class PostServiceTest {
                 .category(100)
                 .build();
     }
-
 
     private List<Seller> createSellers() {
         Seller seller1 = Seller.builder()
