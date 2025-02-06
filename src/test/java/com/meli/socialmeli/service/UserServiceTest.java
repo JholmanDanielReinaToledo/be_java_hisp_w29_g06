@@ -99,12 +99,15 @@ public class UserServiceTest {
         Integer sellerIdValid = 1;
 
         // Mockeamos que existen o no existen segun el que reciba el repository
-        when(userRepository.getById(sellerIdValid)).thenReturn(Optional.of(userWithNoFollows));
-        when(userRepository.getById(sellerIdInvalid)).thenReturn(Optional.empty());
+        when(userRepository.getById(userIdValid)).thenReturn(Optional.of(userWithNoFollows));
+        when(userRepository.getById(userIdInvalid)).thenReturn(Optional.empty());
         when(sellerRepository.getById(sellerIdInvalid)).thenReturn(Optional.empty());
         
         // Act & Assert
         // Verificamos que se lancen las excepciones cuando alguno de los dos usuarios no exista
+        // Situaciones que lanzan excepcion:
+        // - que user no exista y seller si exista -> como la verificación es secuencial, incluye ambos casos de si el seller existe o no existe
+        // - que user si exista y seller no exista
         Assertions.assertThrows(NotFoundException.class,
                                 () -> userService.followSeller(userIdValid, sellerIdInvalid));
         Assertions.assertThrows(NotFoundException.class,
