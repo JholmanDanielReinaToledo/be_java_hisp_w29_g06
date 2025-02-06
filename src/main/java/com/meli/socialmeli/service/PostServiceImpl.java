@@ -7,8 +7,10 @@ import java.util.List;
 import java.util.Optional;
 
 import com.meli.socialmeli.constants.Messages;
+import com.meli.socialmeli.constants.OrderType;
 import com.meli.socialmeli.constants.PostOrder;
 import com.meli.socialmeli.dto.response.ResponseDto;
+import com.meli.socialmeli.exception.NotFoundOrderException;
 import org.springframework.stereotype.Service;
 
 import com.meli.socialmeli.dto.NumberOfProductsInSaleDto;
@@ -134,6 +136,10 @@ public class PostServiceImpl implements IPostService {
         User user = userRepository.getById(userId).orElseThrow(() -> new NotFoundException(Messages.USER_NOT_FOUND.replace("%s", userId.toString())));
         if (user.getFollows().isEmpty()) {
             throw new NoSellersFollowedException(Messages.USER_WITHOUT_FOLLOWERS);
+        }
+
+        if (order == OrderType.NOT_FOUND.getValue()) {
+            throw new NotFoundOrderException(Messages.ORDER_NOT_FOUND);
         }
 
         List<Post> postList = postRepository.getPostsBySellers(user.getFollows());
