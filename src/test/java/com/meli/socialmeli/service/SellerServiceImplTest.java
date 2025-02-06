@@ -1,5 +1,6 @@
 package com.meli.socialmeli.service;
 
+import com.meli.socialmeli.dto.SellerDto;
 import com.meli.socialmeli.entity.Seller;
 import com.meli.socialmeli.entity.User;
 import com.meli.socialmeli.exception.NotFoundOrderException;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -41,6 +43,21 @@ class SellerServiceImplTest {
         testUsers = createTestUsers();
         testSeller = createTestSeller();
         mockSellerRepository();
+    }
+
+    @Test
+    @DisplayName("T-0002: Should successfully get followers count")
+    void countFollowersOk() {
+        //Arrange
+        when(sellerRepository.getById(SELLER_ID)).thenReturn(Optional.of(testSeller));
+
+        //Act
+        SellerDto response = sellerService.countFollowers(SELLER_ID);
+
+        //Assert
+        verify(sellerRepository).getById(SELLER_ID);
+        assertEquals(SELLER_NAME, response.getUser_name());
+        assertEquals(testSeller.getFollowers().size(), response.getFollowers_count());
     }
 
     @Test
