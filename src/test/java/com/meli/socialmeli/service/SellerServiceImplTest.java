@@ -5,6 +5,7 @@ import com.meli.socialmeli.dto.FollowedDto;
 import com.meli.socialmeli.dto.FollowedListResponseDto;
 import com.meli.socialmeli.dto.FollowersDto;
 import com.meli.socialmeli.dto.UserDto;
+import com.meli.socialmeli.dto.SellerDto;
 import com.meli.socialmeli.entity.Seller;
 import com.meli.socialmeli.entity.User;
 import com.meli.socialmeli.exception.NotFoundOrderException;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -61,6 +63,21 @@ class SellerServiceImplTest {
 
     }
 
+
+    @Test
+    @DisplayName("T-0002: Should successfully get followers count")
+    void countFollowersOk() {
+        //Arrange
+        when(sellerRepository.getById(SELLER_ID)).thenReturn(Optional.of(testSeller));
+
+        //Act
+        SellerDto response = sellerService.countFollowers(SELLER_ID);
+
+        //Assert
+        verify(sellerRepository).getById(SELLER_ID);
+        assertEquals(SELLER_NAME, response.getUser_name());
+        assertEquals(testSeller.getFollowers().size(), response.getFollowers_count());
+    }
 
     @Test
     @DisplayName("T-0003: Should successfully get followers with valid order parameters")
