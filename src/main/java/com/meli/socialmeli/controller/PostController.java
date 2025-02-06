@@ -4,6 +4,7 @@ package com.meli.socialmeli.controller;
 import com.meli.socialmeli.constants.Endpoints;
 import com.meli.socialmeli.constants.OrderType;
 import com.meli.socialmeli.dto.response.ResponseDto;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,12 +36,12 @@ public class PostController {
     }
 
     @PostMapping(Endpoints.POSTS_POST)
-    public ResponseEntity<ResponseDto> addPost(@RequestBody PostDto postDto) {
+    public ResponseEntity<ResponseDto> addPost(@Valid @RequestBody PostDto postDto) {
         return new ResponseEntity<>(postService.addPost(postDto), HttpStatus.CREATED);
     }
 
     @PostMapping(Endpoints.POSTS_PROMO_POST)
-    public ResponseEntity<ResponseDto> createPromoPost(@RequestBody PostDto promoPostDto) {
+    public ResponseEntity<ResponseDto> createPromoPost(@Valid @RequestBody PostDto promoPostDto) {
         return ResponseEntity.status(HttpStatus.OK).body(postService.addPromoPost(promoPostDto));
     }
 
