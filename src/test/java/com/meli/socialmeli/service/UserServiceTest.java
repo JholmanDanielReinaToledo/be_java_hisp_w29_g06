@@ -26,7 +26,6 @@ import com.meli.socialmeli.repository.ISellerRepository;
 import com.meli.socialmeli.repository.IUserRepository;
 
 @ExtendWith(MockitoExtension.class)
-@SpringBootTest
 public class UserServiceTest {
 
     @Mock
