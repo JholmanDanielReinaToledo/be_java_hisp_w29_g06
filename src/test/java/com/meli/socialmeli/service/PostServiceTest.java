@@ -2,6 +2,7 @@ package com.meli.socialmeli.service;
 
 
 import com.meli.socialmeli.constants.PostOrder;
+import com.meli.socialmeli.dto.PostDto;
 import com.meli.socialmeli.dto.response.PostFromFollowedDto;
 import com.meli.socialmeli.entity.Post;
 import com.meli.socialmeli.entity.Product;
@@ -67,7 +68,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("Should throw NotFoundOrderException when order is not valid")
+    @DisplayName("T-0005: Should throw NotFoundOrderException when order is not valid")
     void getPostsFromFollowedUsers_OrderNotFoundException() {
         //Arrange
         Integer order = 0; //incorrecto
@@ -79,7 +80,7 @@ public class PostServiceTest {
     }
 
     @Test
-    @DisplayName("Should return a list of posts from followed users")
+    @DisplayName("T-0005: Should return a list of posts from followed users")
     void getPostsFromFollowedUsers_Ok() {
         //Arrange
         when(userRepository.getById(USER_ID)).thenReturn(Optional.of(testUser));
@@ -92,6 +93,36 @@ public class PostServiceTest {
         verify(userRepository).getById(USER_ID);
         verify(postRepository).getPostsBySellers(testUser.getFollows());
         assert(response.getPosts().size() > 0); //Al menos 1 post
+    }
+
+    @Test
+    @DisplayName("T-0006: Check that order is correct")
+    void getPostsFromFollowedUsersOkOrder() {
+        // Arrange
+        when(userRepository.getById(USER_ID)).thenReturn(Optional.of(testUser));
+        when(postRepository.getPostsBySellers(sellers)).thenReturn(posts);
+        PostDto postRecentDate = PostDto.builder().id(1)
+                                                   .date(CURRENT_DATE)
+                                                   .build();
+        PostDto postOldDate = PostDto.builder().id(2)
+                                               .date(CURRENT_DATE.minusDays(1))
+                                               .build();
+        PostFromFollowedDto expectedAsc = PostFromFollowedDto.builder()
+                                                             .userId(USER_ID)
+                                                             .posts(Arrays.asList(postRecentDate,postOldDate))
+                                                             .build();
+        PostFromFollowedDto expectedDesc = PostFromFollowedDto.builder()
+                                                              .userId(USER_ID)
+                                                              .posts(Arrays.asList(postOldDate,postRecentDate))
+                                                              .build();
+        // Act
+        PostFromFollowedDto resultAsc  = postService.getPostsFromFollowedUsers(USER_ID, 1);
+        PostFromFollowedDto resultDesc = postService.getPostsFromFollowedUsers(USER_ID, 2);
+
+        // Assert
+        Assertions.assertEquals(expectedDesc, resultDesc);
+        Assertions.assertEquals(expectedAsc, resultAsc);
+        
     }
 
     @Test
