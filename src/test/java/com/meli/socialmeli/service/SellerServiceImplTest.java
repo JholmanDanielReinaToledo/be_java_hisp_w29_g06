@@ -40,33 +40,31 @@ class SellerServiceImplTest {
 
     private List<User> testUsers;
     private Seller testSeller;
+    private Seller seller;
 
+    @BeforeEach
     void setUp() {
         testUsers = createTestUsers();
         testSeller = createTestSeller();
         mockSellerRepository();
-    }
 
-    public void setUpExt(){
         // Crear vendedores
         User user1 = new User(1, "Carlos", List.of());
         User user2 = new User(2, "Ana", List.of());
         User user3 = new User(3, "Beatriz", List.of());
 
         // Crear un usuario de prueba
-        Seller seller = new Seller();
+        seller = new Seller();
         seller.setId(1);
         seller.setName("SellerTest");
         seller.setFollowers(Arrays.asList(user1, user2, user3));
 
-        // Simular el comportamiento del repositorio para devolver el usuario
-        when(sellerRepository.getById(1)).thenReturn(Optional.of(seller));
     }
+
 
     @Test
     @DisplayName("T-0003: Should successfully get followers with valid order parameters")
     void getFollowersBySellerIdOk() {
-        setUp();
         // Arrange
         List<String> validOrders = Arrays.asList("name_asc", "name_desc");
 
@@ -79,7 +77,6 @@ class SellerServiceImplTest {
     @Test
     @DisplayName("T-0003: Should throw exception with invalid order parameters")
     void getFollowersBySellerIdException() {
-        setUp();
         // Arrange
         List<String> invalidOrders = Arrays.asList("invalid_order", "name_non", " ");
 
@@ -91,8 +88,10 @@ class SellerServiceImplTest {
     }
 
     @Test
+    @DisplayName("T-0004: Order es descendente.")
     void testOrderDescendente() {
-        setUpExt();
+        // Simular el comportamiento del repositorio para devolver el vendedor
+        when(sellerRepository.getById(1)).thenReturn(Optional.of(seller));
 
         FollowersDto response = sellerService.getFollowersBySellerId(1, "name_desc");
         List<UserDto> followers = response.getFollowers();
@@ -103,8 +102,10 @@ class SellerServiceImplTest {
     }
 
     @Test
+    @DisplayName("T-0004: Order es ascendente.")
     void testOrderAscendente() {
-        setUpExt();
+        // Simular el comportamiento del repositorio para devolver el vendedor
+        when(sellerRepository.getById(1)).thenReturn(Optional.of(seller));
 
         FollowersDto response = sellerService.getFollowersBySellerId(1, "name_asc" );
         List<UserDto> followers = response.getFollowers();
@@ -115,8 +116,10 @@ class SellerServiceImplTest {
     }
 
     @Test
+    @DisplayName("T-0004: Order es invalido.")
     void testOrderInvalido() {
-        setUpExt();
+        // Simular el comportamiento del repositorio para devolver el vendedor
+        when(sellerRepository.getById(1)).thenReturn(Optional.of(seller));
         assertThrows(NotFoundOrderException.class, () ->
                 sellerService.getFollowersBySellerId(1, "El orden no es válido"), Messages.ORDER_NOT_FOUND);
     }

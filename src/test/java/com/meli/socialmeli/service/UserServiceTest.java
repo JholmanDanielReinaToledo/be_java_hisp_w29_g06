@@ -50,6 +50,9 @@ public class UserServiceTest {
     private final Integer userId = 1;
     private final Integer sellerId = 1;
 
+    private User user;
+
+    @BeforeEach
     public void setUp() {
         userWithNoFollows = User.builder()
                         .id(1)
@@ -72,28 +75,24 @@ public class UserServiceTest {
                                     .build();
         userWithFollows.setFollows(Arrays.asList(sellerWithFollowers));
         sellerWithFollowers.setFollowers(Arrays.asList(userWithFollows));
-    }
 
-    public void setUpExt(){
         // Crear vendedores
         Seller seller1 = new Seller(1, "Carlos", List.of());
         Seller seller2 = new Seller(2, "Ana", List.of());
         Seller seller3 = new Seller(3, "Beatriz", List.of());
 
         // Crear un usuario de prueba
-        User user = new User();
+        user = new User();
         user.setId(1);
         user.setName("UsuarioTest");
         user.setFollows(Arrays.asList(seller1, seller2, seller3));
-
-        // Simular el comportamiento del repositorio para devolver el usuario
-        when(userRepository.getById(1)).thenReturn(Optional.of(user));
     }
+
 
     @Test
     @DisplayName("T-0001: User follows a Seller ")
     public void followSellerOk() {
-        setUp();
+
         // Arrange
         // Declaramos los Id que se le pasan a la función de service
         Integer userId = 1;
@@ -114,7 +113,6 @@ public class UserServiceTest {
     @Test
     @DisplayName("T-0001: User or Seller not found")
     public void followSellerNotFoundException() {
-        setUp();
         //Arrange
 
         // Id de usuarios que existen o no existen
@@ -142,7 +140,6 @@ public class UserServiceTest {
     @Test
     @DisplayName("T-0001: User already follows a Seller")
     public void followSellerConflictException() {
-        setUp();
         // Arrange
         Integer userId = 2;
         Integer sellerId = 2;
@@ -158,7 +155,6 @@ public class UserServiceTest {
     @Test
     @DisplayName("TEST-002 - Dejar de seguir un vendedor exitosamente")
     void testUnfollowSellerOk() {
-        setUp();
         // Arrange
         User mockUser = new User();
         Seller mockSeller = new Seller();
@@ -179,7 +175,6 @@ public class UserServiceTest {
     @Test
     @DisplayName("TEST-002: Verificar que al dejar de seguir a un vendedor si el vendedor no existe, se lanza una excepción")
     void testUnfollowSellerException() {
-        setUp();
         // Arrange
         User mockUser = new User();
         when(userRepository.getById(userId)).thenReturn(Optional.of(mockUser));
@@ -192,7 +187,6 @@ public class UserServiceTest {
     @Test
     @DisplayName("TEST-002: Verificar que al dejar de seguir a un vendedor si el usuario no existe, se lanza una excepción")
     void testUnfollowSeller_UserNotFound() {
-        setUp();
         // Arrange
         when(userRepository.getById(userId)).thenReturn(Optional.empty());
 
@@ -203,7 +197,6 @@ public class UserServiceTest {
     @Test
     @DisplayName("TEST-002: Verificar que al dejar de seguir a un vendedor si el usuario no lo sigue, se lanza una excepción")
     void testUnfollowSeller_UserNotFollowingSeller() {
-        setUp();
         // Arrange
         User mockUser = new User();
         Seller mockSeller = new Seller();
@@ -216,17 +209,18 @@ public class UserServiceTest {
     }
 
     @Test
+    @DisplayName("TEST-0004 - Order es igual a Null")
     void testOrderNull() {
-        setUpExt();
+        when(userRepository.getById(1)).thenReturn(Optional.of(user));
 
         assertThrows(NotFoundOrderException.class, () ->
                 userService.getFollowedList(1, null), Messages.ORDER_NOT_FOUND);
     }
 
     @Test
+    @DisplayName("TEST-0004 - Order es descendente")
     void testOrderDescendente() {
-        setUpExt();
-
+        when(userRepository.getById(1)).thenReturn(Optional.of(user));
         FollowedListResponseDto response = userService.getFollowedList(1, "name_desc");
         List<FollowedDto> followed = response.getFollowed();
 
@@ -236,9 +230,9 @@ public class UserServiceTest {
     }
 
     @Test
+    @DisplayName("TEST-0004 - Order es ascendente")
     void testOrderAscendente() {
-        setUpExt();
-
+        when(userRepository.getById(1)).thenReturn(Optional.of(user));
         FollowedListResponseDto response = userService.getFollowedList(1, "name_asc" );
         List<FollowedDto> followed = response.getFollowed();
 
@@ -248,8 +242,9 @@ public class UserServiceTest {
     }
 
     @Test
+    @DisplayName("TEST-0004 - Order es invalido")
     void testOrderInvalido() {
-        setUpExt();
+        when(userRepository.getById(1)).thenReturn(Optional.of(user));
         assertThrows(NotFoundOrderException.class, () ->
                 userService.getFollowedList(1, "El orden no es válido"), Messages.ORDER_NOT_FOUND);
     }
