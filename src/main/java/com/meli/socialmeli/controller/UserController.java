@@ -3,6 +3,7 @@ package com.meli.socialmeli.controller;
 
 import com.meli.socialmeli.constants.Endpoints;
 import com.meli.socialmeli.dto.UserDto;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,13 +26,19 @@ public class UserController {
     private IUserService userService;
     private ISellerService sellerService;
 
-    public UserController(UserServiceImpl userService, SellerServiceImpl sellerService) {
+    public UserController(
+            UserServiceImpl userService,
+            SellerServiceImpl sellerService
+    ) {
         this.userService = userService;
         this.sellerService = sellerService;
     }
 
     @PostMapping(Endpoints.USERS_FOLLOW)
-    public ResponseEntity<ResponseDto> followSeller(@PathVariable Integer userId, @PathVariable Integer sellerId ) {
+    public ResponseEntity<ResponseDto> followSeller(
+            @PathVariable Integer userId,
+            @PathVariable Integer sellerId
+    ) {
         return new ResponseEntity<>(this.userService.followSeller(userId, sellerId), HttpStatus.OK);
     }
 
@@ -60,7 +67,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
         return new ResponseEntity<>(userService.add(userDto), HttpStatus.CREATED);
     }
 

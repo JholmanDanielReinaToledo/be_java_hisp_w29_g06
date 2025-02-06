@@ -4,6 +4,7 @@ import com.meli.socialmeli.constants.Endpoints;
 import com.meli.socialmeli.dto.CreateSellerDto;
 import com.meli.socialmeli.dto.SellerDto;
 import com.meli.socialmeli.service.ISellerService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class SellerController {
     }
 
     @PostMapping(Endpoints.BASE_SELLER)
-    public ResponseEntity<CreateSellerDto> postSeller(@RequestBody CreateSellerDto createSellerDto) {
+    public ResponseEntity<CreateSellerDto> postSeller(@Valid @RequestBody CreateSellerDto createSellerDto) {
         return new ResponseEntity<>(sellerService.addSeller(createSellerDto), HttpStatus.CREATED);
     }
 
