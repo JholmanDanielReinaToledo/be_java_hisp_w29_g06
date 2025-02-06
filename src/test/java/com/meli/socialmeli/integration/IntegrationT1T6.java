@@ -1,5 +1,6 @@
 package com.meli.socialmeli.integration;
 
+import com.meli.socialmeli.constants.Messages;
 import com.meli.socialmeli.entity.Seller;
 import com.meli.socialmeli.entity.User;
 import com.meli.socialmeli.repository.SellerRepositoryImpl;
@@ -48,18 +49,18 @@ public class IntegrationT1T6 {
     public void testT1() throws Exception {
         mockMvc.perform(post("/users/15/follow/15"))
              .andExpect(status().isOk())
-             .andExpect(jsonPath("$.message").value("Vendedor seguido con éxito"));
+             .andExpect(jsonPath("$.message").value(Messages.SUCCESS_FOLLOW));
 
         mockMvc.perform(post("/users/15/follow/15"))
                 .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.message").value("Ya sigues a este vendedor"));
+                .andExpect(jsonPath("$.message").value(Messages.USER_ALREADY_FOLLOWED));
     }
 
     @Test
     public void testT6() throws Exception {
         mockMvc.perform(get("/products/followed/1/list"))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value("El orden no es válido"));
+                .andExpect(jsonPath("$.message").value(Messages.ORDER_NOT_FOUND));
 
         mockMvc.perform(get("/products/followed/1/list?order=name_asc"))
                 .andDo(print())
