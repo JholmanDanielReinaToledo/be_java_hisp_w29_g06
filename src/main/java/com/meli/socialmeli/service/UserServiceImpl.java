@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import com.meli.socialmeli.exception.NotFoundOrderException;
 import org.springframework.stereotype.Service;
 
 import com.meli.socialmeli.constants.Messages;
@@ -84,12 +85,12 @@ public class UserServiceImpl implements IUserService {
             throw new NotFoundException(Messages.USER_WITHOUT_FOLLOWED);
         }
 
-        if (order != null) {
-            if ("name_desc".equals(order)) {
-                sellers.sort(Comparator.comparing(Seller::getName).reversed());
-            } else {
-                sellers.sort(Comparator.comparing(Seller::getName));
-            }
+        if ("name_desc".equals(order)) {
+            sellers.sort(Comparator.comparing(Seller::getName).reversed());
+        } else if ("name_asc".equals(order)) {
+            sellers.sort(Comparator.comparing(Seller::getName));
+        } else {
+            throw new NotFoundOrderException(Messages.ORDER_NOT_FOUND);
         }
 
         List<FollowedDto> followedDtos = sellers.stream().map(seller -> new FollowedDto(seller.getId(),seller.getName())).toList();
