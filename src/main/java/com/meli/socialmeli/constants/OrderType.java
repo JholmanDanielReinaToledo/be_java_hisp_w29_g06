@@ -17,6 +17,8 @@ public enum OrderType {
 
     public static OrderType fromString(String str) {
         return switch (str) {
+            case "date_asc" -> ASCENDING;
+            case "date_desc" -> DESCENDING;
             case "name_asc" -> ASCENDING;
             case "name_desc" -> DESCENDING;
             default -> NOT_FOUND;
