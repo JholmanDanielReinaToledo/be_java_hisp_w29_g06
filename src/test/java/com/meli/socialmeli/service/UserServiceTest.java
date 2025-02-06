@@ -34,7 +34,6 @@ public class UserServiceTest {
 
     private final Integer userId = 1;
     private final Integer sellerId = 1;
-    private final Integer sellerIdToUnfollow = 1;
 
     @Test
     @DisplayName("US-0007 - Dejar de seguir un vendedor exitosamente")
@@ -62,7 +61,7 @@ public class UserServiceTest {
         // Arrange
         User mockUser = new User();
         when(userRepository.getById(userId)).thenReturn(Optional.of(mockUser));
-        when(sellerRepository.getById(sellerIdToUnfollow)).thenReturn(Optional.empty());
+        when(sellerRepository.getById(sellerId)).thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(NotFoundException.class, () -> userService.unfollowSeller(userId, sellerIdToUnfollow));
