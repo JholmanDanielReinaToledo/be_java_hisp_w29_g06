@@ -7,7 +7,7 @@ public class Messages {
     public static final String PRODUCT_CONFLICT = "El producto con ese ID ya existe";
     public static final String USER_WITHOUT_FOLLOWERS = "El usuario no tiene seguidores";
     public static final String SELLER_NOT_FOUND = "El vendedor con el id %s no existe.";
-    public static final String NO_FOLLOWERS_ASSOCIATED = "No se encontraron Folowers asociados al vendendor.";
+    public static final String NO_FOLLOWERS_ASSOCIATED = "No se encontraron Followers asociados al vendedor.";
     public static final String CAN_NOT_FOLLOW_YOURSELF = "No puedes seguirte a ti mismo";
     public static final String USER_ALREADY_FOLLOWED = "Ya sigues a este vendedor";
     public final static String SUCCESS_FOLLOW = "Vendedor seguido con éxito";

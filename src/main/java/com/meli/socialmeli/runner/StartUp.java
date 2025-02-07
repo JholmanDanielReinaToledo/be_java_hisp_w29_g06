@@ -57,7 +57,8 @@ public class StartUp {
         List<Seller> sellers = List.of(
                 new Seller(1, "Don German", followers1),
                 new Seller(2, "El Paisa", followers3),
-                new Seller(3, "Panadería de la Esquina", followers2)
+                new Seller(3, "Panadería de la Esquina", followers2),
+                new Seller(4, "D1", new ArrayList<>())
         );
 
         // Guardamos los vendedores en el repositorio
