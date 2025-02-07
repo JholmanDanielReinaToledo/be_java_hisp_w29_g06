@@ -107,9 +107,9 @@ public class PostServiceTest {
         Comparator<Post> comparator_asc = getPostOrder(1).getComparator();
         Comparator<Post> comparator_desc = getPostOrder(2).getComparator();
         List<Post> postsOrderedAsc = posts;
-        postsOrderedAsc.stream().sorted(comparator_asc);
+        postsOrderedAsc = postsOrderedAsc.stream().sorted(comparator_asc).toList();
         List<Post> postsOrderedDesc = posts;
-        postsOrderedDesc.stream().sorted(comparator_desc);
+        postsOrderedDesc = postsOrderedDesc.stream().sorted(comparator_desc).toList();
         List<PostDto> postDtoListAsc = createPostsDtosBeforeTwoWeeks(postsOrderedAsc);
         List<PostDto> postDtoListDesc = createPostsDtosBeforeTwoWeeks(postsOrderedDesc);
 
