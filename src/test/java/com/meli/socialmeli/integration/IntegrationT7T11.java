@@ -1,4 +1,4 @@
-package com.meli.socialmeli.service.integration;
+package com.meli.socialmeli.integration;
 
 import com.meli.socialmeli.constants.Messages;
 import com.meli.socialmeli.entity.Post;
@@ -33,8 +33,6 @@ public class IntegrationT7T11 {
     @Autowired
     private SellerRepositoryImpl sellerRepository;
 
-    @Autowired
-    private PostRepositoryImpl postRepository;
 
     @Autowired
     private MockMvc mockMvc;
@@ -45,17 +43,11 @@ public class IntegrationT7T11 {
     @BeforeEach
     public void beforeEach() {
         user = new User(20, "Pepito", new ArrayList<>());
-        seller = new Seller(20, "Juanito", new ArrayList<>());
+        seller = new Seller(20, "VendedorX", new ArrayList<>());
         this.userRepository.save(user);
         this.sellerRepository.save(seller);
         sellerRepository.addFollower(seller, user);
-        for (int i = 30; i < 35; i++) {
-            Post promoPost = new Post();
-            promoPost.setId(i + 1);
-            promoPost.setSeller(seller);
-            promoPost.setHasPromo(true);
-            this.postRepository.save(promoPost);
-        }
+
     }
 
     @Test
@@ -72,10 +64,10 @@ public class IntegrationT7T11 {
     @Test
     public void testGetNumberOfProductsInSaleSuccess() throws Exception {
 
-        mockMvc.perform(get("/products/promo-post/count?user_id=20"))
+        mockMvc.perform(get("/products/promo-post/count?user_id=1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.user_id").value(20))
-                .andExpect(jsonPath("$.user_name").value("Juanito"))
+                .andExpect(jsonPath("$.user_id").value(1))
+                .andExpect(jsonPath("$.user_name").value("Don German"))
                 .andExpect(jsonPath("$.promo_products_count").value(5L));
     }
 
