@@ -253,6 +253,7 @@ public class UserServiceTest {
     }
 
     @Test
+    @DisplayName("T-0009: Save an user")
     void addUserOkTest() {
         // Arrange
         UserDto userDto = new UserDto(null, "John Doe");
@@ -271,6 +272,7 @@ public class UserServiceTest {
     }
 
     @Test
+    @DisplayName("T-0009: Save an user")
     void addUserFailTest() {
         // Arrange
         UserDto userDto = new UserDto(null, "John Doe");
@@ -287,9 +289,3 @@ public class UserServiceTest {
         verify(userRepository, times(1)).save(any(User.class));
     }
 }
-
-    
-
-
-
-
