@@ -53,14 +53,12 @@ public class IntegrationT5T9 {
 
         String payloadJson = mapper.writeValueAsString(post);
 
-        MvcResult response = this.mockMvc
-                .perform(post(Endpoints.BASE_POSTS + Endpoints.POSTS_POST)
+        this.mockMvc.perform(post(Endpoints.BASE_POSTS + Endpoints.POSTS_POST)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(payloadJson))
                 .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.message").value(Messages.SUCCESS))
-                .andReturn();
+                .andExpect(jsonPath("$.message").value(Messages.SUCCESS));
     }
 
     @Test
