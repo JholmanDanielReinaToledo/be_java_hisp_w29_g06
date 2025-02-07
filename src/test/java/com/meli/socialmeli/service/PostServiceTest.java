@@ -1,15 +1,18 @@
 package com.meli.socialmeli.service;
 
 
-import com.meli.socialmeli.constants.PostOrder;
-import com.meli.socialmeli.dto.PostDto;
-import com.meli.socialmeli.dto.response.PostFromFollowedDto;
-import com.meli.socialmeli.entity.Post;
-import com.meli.socialmeli.entity.Product;
-import com.meli.socialmeli.entity.Seller;
-import com.meli.socialmeli.entity.User;
-import com.meli.socialmeli.exception.NotFoundOrderException;
-import com.meli.socialmeli.repository.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,20 +21,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import com.meli.socialmeli.constants.PostOrder;
+import com.meli.socialmeli.dto.PostDto;
+import com.meli.socialmeli.dto.ProductDto;
+import com.meli.socialmeli.dto.response.PostFromFollowedDto;
+import com.meli.socialmeli.entity.Post;
+import com.meli.socialmeli.entity.Product;
+import com.meli.socialmeli.entity.Seller;
+import com.meli.socialmeli.entity.User;
 import com.meli.socialmeli.exception.NoSellersFollowedException;
 import com.meli.socialmeli.exception.NotFoundException;
-import org.junit.jupiter.api.Assertions;
-
-import java.util.Arrays;
+import com.meli.socialmeli.exception.NotFoundOrderException;
+import com.meli.socialmeli.repository.PostRepositoryImpl;
+import com.meli.socialmeli.repository.UserRepositoryImpl;
 
 @ExtendWith(MockitoExtension.class)
 public class PostServiceTest {
@@ -100,28 +102,34 @@ public class PostServiceTest {
     void getPostsFromFollowedUsersOkOrder() {
         // Arrange
         when(userRepository.getById(USER_ID)).thenReturn(Optional.of(testUser));
-        when(postRepository.getPostsBySellers(sellers)).thenReturn(posts);
-        PostDto postRecentDate = PostDto.builder().id(1)
-                                                   .date(CURRENT_DATE)
-                                                   .build();
-        PostDto postOldDate = PostDto.builder().id(2)
-                                               .date(CURRENT_DATE.minusDays(1))
-                                               .build();
+        when(postRepository.getPostsBySellers(testUser.getFollows())).thenReturn(posts);
+
+        Comparator<Post> comparator_asc = getPostOrder(1).getComparator();
+        Comparator<Post> comparator_desc = getPostOrder(2).getComparator();
+        List<Post> postsOrderedAsc = posts;
+        postsOrderedAsc.stream().sorted(comparator_asc);
+        List<Post> postsOrderedDesc = posts;
+        postsOrderedDesc.stream().sorted(comparator_desc);
+        List<PostDto> postDtoListAsc = createPostsDtosBeforeTwoWeeks(postsOrderedAsc);
+        List<PostDto> postDtoListDesc = createPostsDtosBeforeTwoWeeks(postsOrderedDesc);
+
+        
         PostFromFollowedDto expectedAsc = PostFromFollowedDto.builder()
                                                              .userId(USER_ID)
-                                                             .posts(Arrays.asList(postRecentDate,postOldDate))
+                                                             .posts(postDtoListAsc)
                                                              .build();
         PostFromFollowedDto expectedDesc = PostFromFollowedDto.builder()
                                                               .userId(USER_ID)
-                                                              .posts(Arrays.asList(postOldDate,postRecentDate))
+                                                              .posts(postDtoListDesc)
                                                               .build();
         // Act
         PostFromFollowedDto resultAsc  = postService.getPostsFromFollowedUsers(USER_ID, 1);
         PostFromFollowedDto resultDesc = postService.getPostsFromFollowedUsers(USER_ID, 2);
 
         // Assert
-        Assertions.assertEquals(expectedDesc, resultDesc);
         Assertions.assertEquals(expectedAsc, resultAsc);
+        Assertions.assertEquals(expectedDesc, resultDesc);
+        
         
     }
 
@@ -256,6 +264,36 @@ public class PostServiceTest {
         return Arrays.asList(post1, post2, post3);
     }
 
+    private List<PostDto> createPostsDtosBeforeTwoWeeks(List<Post> postsToConvert){
+        List<PostDto> postsDtos = postsToConvert.stream()
+                                                .filter(post -> post.getDate().isAfter(LocalDate.now().minusWeeks(2)))
+                                                .map(post -> PostDto.builder()
+                                                .userId(post.getSeller().getId())
+                                                .id(post.getId())
+                                                .date(post.getDate())
+                                                .product(ProductDto.builder()
+                                                        .productId(post.getProduct().getId())
+                                                        .productName(post.getProduct().getName())
+                                                        .type(post.getProduct().getType())
+                                                        .brand(post.getProduct().getBrand())
+                                                        .color(post.getProduct().getColor())
+                                                        .notes(post.getProduct().getNotes())
+                                                        .build())
+                                                .category(post.getCategory())
+                                                .price(post.getPrice())
+                                                .hasPromo(post.getHasPromo())
+                                                .discount(post.getDiscount())
+                                                .build())
+                                                .toList();
+             return postsDtos;            
+    
+    } 
+     private PostOrder getPostOrder(Integer orderValue) {
+        return Arrays.stream(PostOrder.values())
+                .filter(order -> order.getValueFromOrder() == orderValue)
+                .findFirst()
+                .orElse(PostOrder.DESCENDING);
+    }
     private User createTestUser() {
         return User.builder()
                 .id(USER_ID)
