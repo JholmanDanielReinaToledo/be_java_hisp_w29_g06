@@ -1,7 +1,6 @@
 package com.meli.socialmeli.service;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,6 +8,8 @@ import java.util.Optional;
 
 import com.meli.socialmeli.dto.FollowedDto;
 import com.meli.socialmeli.dto.FollowedListResponseDto;
+import com.meli.socialmeli.dto.UserDto;
+import com.meli.socialmeli.exception.BadRequestException;
 import com.meli.socialmeli.exception.NotFoundOrderException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +21,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 import com.meli.socialmeli.constants.Messages;
 import com.meli.socialmeli.dto.response.ResponseDto;
 import com.meli.socialmeli.entity.Seller;
@@ -248,10 +251,41 @@ public class UserServiceTest {
         assertThrows(NotFoundOrderException.class, () ->
                 userService.getFollowedList(1, "El orden no es válido"), Messages.ORDER_NOT_FOUND);
     }
+
+    @Test
+    @DisplayName("T-0009: Save an user")
+    void addUserOkTest() {
+        // Arrange
+        UserDto userDto = new UserDto(null, "John Doe");
+        User user = User.builder().id(1).name("John Doe").build();
+        when(userRepository.save(any(User.class))).thenReturn(Optional.of(user));
+
+        // Act
+        UserDto result = userService.add(userDto);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.getUser_id());
+        assertEquals("John Doe", result.getUser_name());
+        verify(userRepository, times(1)).save(any(User.class));
+
+    }
+
+    @Test
+    @DisplayName("T-0009: Save an user")
+    void addUserFailTest() {
+        // Arrange
+        UserDto userDto = new UserDto(null, "John Doe");
+        when(userRepository.save(any(User.class))).thenReturn(Optional.empty());
+
+        // Act & Assert
+        BadRequestException thrown = assertThrows(
+                BadRequestException.class,
+                () -> userService.add(userDto),
+                "Expected add() to throw, but it didn't"
+        );
+
+        assertEquals(Messages.INTERNAL_ERROR, thrown.getMessage());
+        verify(userRepository, times(1)).save(any(User.class));
+    }
 }
-
-    
-
-
-
-
