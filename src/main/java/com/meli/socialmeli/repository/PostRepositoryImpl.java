@@ -3,6 +3,8 @@ package com.meli.socialmeli.repository;
 import com.meli.socialmeli.entity.Post;
 import com.meli.socialmeli.entity.Product;
 import com.meli.socialmeli.entity.Seller;
+import lombok.Data;
+import lombok.Getter;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
